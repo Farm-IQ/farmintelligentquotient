@@ -1,0 +1,80 @@
+<div class="admin-model-operations">
+  <header class="model-header">
+    <h1>ML Model Operations</h1>
+    <button (click)="retrainModel()" [disabled]="training" class="btn-primary">{{ training ? 'Training...' : 'Retrain Model' }}</button>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Model Performance Metrics -->
+  <div class="performance-cards">
+    <div class="performance-card">
+      <h3>Accuracy</h3>
+      <p class="metric-value">{{ (modelMetrics.accuracy * 100) | number:'1.1-1' }}%</p>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="modelMetrics.accuracy * 100"></div>
+      </div>
+    </div>
+    <div class="performance-card">
+      <h3>Precision</h3>
+      <p class="metric-value">{{ (modelMetrics.precision * 100) | number:'1.1-1' }}%</p>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="modelMetrics.precision * 100"></div>
+      </div>
+    </div>
+    <div class="performance-card">
+      <h3>Recall</h3>
+      <p class="metric-value">{{ (modelMetrics.recall * 100) | number:'1.1-1' }}%</p>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="modelMetrics.recall * 100"></div>
+      </div>
+    </div>
+    <div class="performance-card">
+      <h3>F1 Score</h3>
+      <p class="metric-value">{{ (modelMetrics.f1Score * 100) | number:'1.1-1' }}%</p>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="modelMetrics.f1Score * 100"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Model Information -->
+  <div class="model-info-card">
+    <h2>Model Information</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Model Version</label>
+        <p>{{ modelMetrics.modelVersion }}</p>
+      </div>
+      <div class="info-item">
+        <label>Last Training</label>
+        <p>{{ modelMetrics.lastTrainingDate | date }}</p>
+      </div>
+      <div class="info-item">
+        <label>Predictions (24h)</label>
+        <p>{{ modelMetrics.predictions24h | number }}</p>
+      </div>
+      <div class="info-item">
+        <label>Avg Inference Time</label>
+        <p>{{ modelMetrics.avgInferenceTime }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Training History -->
+  <div class="training-history-section">
+    <h2>Training History</h2>
+    <div class="history-list">
+      <div *ngFor="let training of trainingHistory" class="history-item">
+        <p class="history-date">{{ training.date | date }}</p>
+        <p class="history-accuracy">Accuracy: {{ (training.accuracy * 100) | number:'1.1-1' }}%</p>
+        <p class="history-status" [style.color]="getStatusColor(training.status)">{{ training.status }}</p>
+      </div>
+    </div>
+  </div>
+</div>

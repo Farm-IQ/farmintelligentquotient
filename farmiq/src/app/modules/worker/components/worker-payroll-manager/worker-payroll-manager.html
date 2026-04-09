@@ -1,0 +1,126 @@
+<div class="payroll-manager">
+  <h2>Payroll Management</h2>
+
+  <!-- Salary Info Cards -->
+  <div class="salary-cards">
+    <div class="card salary-card">
+      <span class="label">Base Salary</span>
+      <span class="value">{{ salaryInfo.baseSalary | currency:'KES' }}</span>
+    </div>
+    <div class="card salary-card">
+      <span class="label">YTD Total</span>
+      <span class="value">{{ salaryInfo.ytdTotal | currency:'KES' }}</span>
+    </div>
+    <div class="card salary-card">
+      <span class="label">Total Payments</span>
+      <span class="value">{{ salaryInfo.totalPayments | currency:'KES' }}</span>
+    </div>
+    <div class="card salary-card">
+      <span class="label">Outstanding Balance</span>
+      <span class="value balance">{{ salaryInfo.balance | currency:'KES' }}</span>
+    </div>
+  </div>
+
+  <!-- Create Payroll Form -->
+  <div class="card form-section">
+    <h3>Create Payroll</h3>
+    <form [formGroup]="payrollForm" (ngSubmit)="createPayroll()" class="payroll-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Period Start</label>
+          <input type="date" formControlName="payroll_period_start" />
+        </div>
+        <div class="form-group">
+          <label>Period End</label>
+          <input type="date" formControlName="payroll_period_end" />
+        </div>
+        <div class="form-group">
+          <label>Base Salary</label>
+          <input type="number" formControlName="base_salary" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Bonus</label>
+          <input type="number" formControlName="bonus" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Allowances</label>
+          <input type="number" formControlName="allowances" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Tax Deduction</label>
+          <input type="number" formControlName="tax_deduction" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Insurance Deduction</label>
+          <input type="number" formControlName="insurance_deduction" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Other Deductions</label>
+          <input type="number" formControlName="other_deductions" placeholder="0.00" />
+        </div>
+      </div>
+
+      <div class="calculation-summary">
+        <div class="calc-item">
+          <span>Gross Pay:</span>
+          <strong>{{ calculatedGross | currency:'KES' }}</strong>
+        </div>
+        <div class="calc-item">
+          <span>Total Deductions:</span>
+          <strong>{{ calculatedDeductions | currency:'KES' }}</strong>
+        </div>
+        <div class="calc-item total">
+          <span>Net Pay:</span>
+          <strong>{{ calculatedNet | currency:'KES' }}</strong>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea formControlName="notes" rows="2"></textarea>
+      </div>
+
+      <button type="submit" [disabled]="!payrollForm.valid || isLoading" class="btn-primary">
+        Create Payroll
+      </button>
+    </form>
+  </div>
+
+  <!-- Payroll History -->
+  <div class="card history-section">
+    <h3>Payroll History</h3>
+    <div *ngIf="payrollHistory.length === 0" class="empty-state">
+      No payroll records found
+    </div>
+    <table *ngIf="payrollHistory.length > 0" class="payroll-table">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Gross Pay</th>
+          <th>Deductions</th>
+          <th>Net Pay</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payroll of payrollHistory">
+          <td>{{ payroll.payroll_period_start | date: 'MMM dd' }} - {{ payroll.payroll_period_end | date: 'MMM dd, yyyy' }}</td>
+          <td>{{ payroll.gross_pay | currency:'KES' }}</td>
+          <td>{{ (payroll.tax_deduction + payroll.insurance_deduction + payroll.other_deductions) | currency:'KES' }}</td>
+          <td><strong>{{ payroll.net_pay | currency:'KES' }}</strong></td>
+          <td>
+            <span class="badge" [class]="payroll.paid ? 'paid' : 'pending'">
+              {{ payroll.paid ? 'Paid' : 'Pending' }}
+            </span>
+          </td>
+          <td>
+            <button *ngIf="!payroll.paid" (click)="markAsPaid(payroll)" class="btn-sm btn-success">
+              Mark as Paid
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

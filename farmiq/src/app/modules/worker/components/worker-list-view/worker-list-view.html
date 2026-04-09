@@ -1,0 +1,59 @@
+<div class="worker-list">
+  <div class="list-header">
+    <h2>Worker Directory</h2>
+    <div class="search-filter">
+      <input type="text" placeholder="Search by name, phone, email..." [(ngModel)]="searchTerm" class="search-input" />
+      <select [(ngModel)]="roleFilter" class="role-filter">
+        <option value="">All Roles</option>
+        <option value="farm_manager">Farm Manager</option>
+        <option value="field_supervisor">Field Supervisor</option>
+        <option value="harvest_staff">Harvest Staff</option>
+        <option value="tractor_driver">Tractor Driver</option>
+        <option value="driver">Driver</option>
+        <option value="irrigator">Irrigator</option>
+        <option value="spray_operator">Spray Operator</option>
+        <option value="pack_house_manager">Pack House Manager</option>
+        <option value="packers">Packers</option>
+        <option value="office_manager">Office Manager</option>
+        <option value="clerk">Clerk</option>
+        <option value="askari">Askari</option>
+        <option value="store_keeper">Store Keeper</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="(workers$ | async) as workers">
+    <div *ngIf="getFilteredWorkers(workers).length === 0" class="empty-state">
+      <p>No workers found matching your criteria</p>
+    </div>
+
+    <div class="workers-table-container" *ngIf="getFilteredWorkers(workers).length > 0">
+      <table class="workers-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Hired</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let worker of getFilteredWorkers(workers)">
+            <td><strong>{{ worker.worker_name }}</strong></td>
+            <td><span class="role-badge">{{ worker.role }}</span></td>
+            <td><a href="tel:{{ worker.phone_number }}">{{ worker.phone_number }}</a></td>
+            <td><a href="mailto:{{ worker.email }}">{{ worker.email }}</a></td>
+            <td><span class="status-badge" [class]="'status-' + worker.status">{{ worker.status }}</span></td>
+            <td>{{ worker.hire_date | date: 'MMM dd, yyyy' }}</td>
+            <td>
+              <button (click)="viewWorker(worker)" class="btn-link">View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

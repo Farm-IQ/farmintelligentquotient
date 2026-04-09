@@ -1,0 +1,1248 @@
+﻿$primary-color: #10b981;
+$primary-dark: #059669;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$border-color: #e5e7eb;
+$bg-light: #f9fafb;
+$success-color: #22c55e;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$info-color: #3b82f6;
+
+.farmer-analytics-dashboard {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 16px;
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid $border-color;
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+
+  .error-banner {
+    padding: 16px;
+    background: #fef2f2;
+    border-left: 4px solid $danger-color;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+
+    ion-icon {
+      font-size: 24px;
+      color: $danger-color;
+      flex-shrink: 0;
+    }
+
+    .error-content {
+      flex: 1;
+
+      h3 {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      p {
+        margin: 0 0 4px 0;
+        font-size: 13px;
+        color: $text-secondary;
+
+        &.error-details {
+          font-size: 12px;
+          opacity: 0.8;
+        }
+      }
+
+      .error-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+
+        button {
+          padding: 6px 12px;
+          border-radius: 6px;
+          border: 1px solid $danger-color;
+          background: white;
+          color: $danger-color;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          transition: all 0.2s ease;
+
+          ion-icon {
+            font-size: 14px;
+          }
+
+          &:hover {
+            background: $danger-color;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  .dashboard-content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    gap: 12px;
+    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid $border-color;
+    margin-bottom: 24px;
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid $border-color;
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    p {
+      font-size: 13px;
+      color: $text-secondary;
+      margin: 0;
+    }
+  }
+
+  .section-error {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 16px;
+    background: #fef2f2;
+    border: 1px solid $danger-color;
+    border-radius: 8px;
+    margin-bottom: 16px;
+
+    ion-icon {
+      font-size: 24px;
+      color: $danger-color;
+      flex-shrink: 0;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: $text-secondary;
+      flex: 1;
+    }
+  }
+}
+
+// ============================================================================
+// PAGE HEADER & NAVIGATION
+// ============================================================================
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, $primary-color, $primary-dark);
+  border-radius: 12px;
+  color: white;
+
+  .header-left {
+    flex: 1;
+
+    h1 {
+      margin: 0 0 16px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+  }
+
+  .farm-selector {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .farm-dropdown {
+      flex: 1;
+      max-width: 300px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      color: $text-primary;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    .btn-add-farm {
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .no-farms {
+    p {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      padding: 10px 20px;
+      background: white;
+      color: $primary-color;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .btn-refresh {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+}
+
+// ============================================================================
+// QUICK STATS CARDS
+// ============================================================================
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .stat-card {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .stat-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .stat-label {
+        font-size: 12px;
+        color: $text-secondary;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: $text-primary;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// DASHBOARD TABS
+// ============================================================================
+
+.dashboard-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid $border-color;
+  overflow-x: auto;
+  padding-bottom: 0;
+
+  .tab {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: $text-secondary;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-size: 14px;
+
+    &:hover {
+      color: $text-primary;
+      background: $bg-light;
+      border-radius: 8px 8px 0 0;
+    }
+
+    &.active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+    }
+  }
+}
+
+// ============================================================================
+// TAB CONTENT
+// ============================================================================
+
+.tab-content {
+  animation: fadeIn 0.3s ease;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: $text-primary;
+    }
+
+    .btn-add {
+      padding: 10px 16px;
+      background: $primary-color;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $primary-dark;
+      }
+
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// ============================================================================
+// ANALYTICS GRID
+// ============================================================================
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .analytics-card {
+    padding: 20px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    text-align: center;
+
+    h3 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-secondary;
+      text-transform: uppercase;
+    }
+
+    .metric-large {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+
+      &.impact-positive {
+        color: $success-color;
+      }
+
+      &.impact-negative {
+        color: $danger-color;
+      }
+
+      &.impact-neutral {
+        color: $text-primary;
+      }
+    }
+
+    .metric-unit {
+      display: block;
+      font-size: 12px;
+      color: $text-secondary;
+    }
+
+    .gauge {
+      width: 100%;
+      height: 6px;
+      background: $border-color;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+
+      .gauge-fill {
+        height: 100%;
+        background: linear-gradient(90deg, $primary-color, $success-color);
+        transition: width 0.3s ease;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// RECOMMENDATIONS
+// ============================================================================
+
+.recommendations {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .recommendation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .recommendation-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: $bg-light;
+      border-radius: 8px;
+      border-left: 3px solid $warning-color;
+
+      .rec-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .rec-content {
+        flex: 1;
+
+        h4 {
+          margin: 0 0 4px 0;
+          font-size: 13px;
+          font-weight: 600;
+          color: $text-primary;
+        }
+
+        p {
+          margin: 0 0 6px 0;
+          font-size: 12px;
+          color: $text-secondary;
+        }
+
+        .impact {
+          display: block;
+          font-size: 11px;
+          color: $primary-color;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// MAP SECTION
+// ============================================================================
+
+.map-section {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  overflow: hidden;
+  margin-bottom: 24px;
+
+  .btn-toggle-map {
+    padding: 8px 16px;
+    background: $bg-light;
+    border: 1px solid $border-color;
+    color: $text-primary;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $primary-color;
+      color: white;
+      border-color: $primary-color;
+    }
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+
+  .map-container {
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 8px;
+    margin-bottom: 12px;
+
+    :deep(.maplibregl-canvas) {
+      border-radius: 8px;
+    }
+  }
+
+  .map-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 400px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid $border-color;
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    p {
+      color: $text-secondary;
+      font-size: 14px;
+    }
+  }
+}
+
+// ============================================================================
+// OPERATIONS / LIVESTOCK / INVENTORY CARDS
+// ============================================================================
+
+.operations-grid,
+.livestock-grid,
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .empty-state {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    color: $text-secondary;
+    background: $bg-light;
+    border-radius: 8px;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
+  .operation-card,
+  .livestock-card,
+  .inventory-card {
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: $primary-color;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      padding: 16px;
+      border-bottom: 1px solid $border-color;
+      background: $bg-light;
+
+      h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+        flex: 1;
+      }
+
+      .status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+
+        &.status-active,
+        &.status-dairy,
+        &.status-in-stock {
+          background: rgba($success-color, 0.1);
+          color: $success-color;
+        }
+
+        &.status-inactive,
+        &.status-medium,
+        &.status-low-stock {
+          background: rgba($warning-color, 0.1);
+          color: $warning-color;
+        }
+
+        &.status-pending,
+        &.status-out-of-stock {
+          background: rgba($danger-color, 0.1);
+          color: $danger-color;
+        }
+
+        &.status-completed {
+          background: rgba($info-color, 0.1);
+          color: $info-color;
+        }
+      }
+    }
+
+    .card-body {
+      padding: 16px;
+      flex: 1;
+
+      p {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        color: $text-secondary;
+
+        strong {
+          color: $text-primary;
+          font-weight: 600;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      .capacity-bar {
+        width: 100%;
+        height: 6px;
+        background: $border-color;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 8px;
+
+        .capacity-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $primary-color, $success-color);
+          transition: width 0.3s ease;
+        }
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: $border-color;
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 8px 0;
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $primary-color, $success-color);
+        }
+      }
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid $border-color;
+      background: $bg-light;
+
+      .btn-edit,
+      .btn-delete {
+        flex: 1;
+        padding: 8px 12px;
+        background: white;
+        border: 1px solid $border-color;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: $primary-color;
+          color: white;
+          border-color: $primary-color;
+        }
+
+        ion-icon {
+          font-size: 16px;
+        }
+      }
+
+      .btn-delete {
+        &:hover {
+          background: $danger-color;
+          border-color: $danger-color;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// ALERTS SECTION
+// ============================================================================
+
+.alerts-section {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  margin-bottom: 20px;
+  border-left: 3px solid $warning-color;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .alert-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: rgba($warning-color, 0.05);
+      border-radius: 6px;
+      font-size: 13px;
+      color: $text-secondary;
+
+      .warning-icon {
+        font-size: 18px;
+        color: $warning-color;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// BUDGET SECTION
+// ============================================================================
+
+.budget-section {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .budget-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .budget-item {
+      .budget-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 13px;
+
+        span {
+          font-weight: 600;
+
+          &:last-child {
+            color: $primary-color;
+          }
+        }
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: $border-color;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 6px;
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $primary-color, $success-color);
+        }
+      }
+
+      small {
+        color: $text-secondary;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// FINANCIAL SUMMARY
+// ============================================================================
+
+.financial-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .finance-card {
+    padding: 20px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    text-align: center;
+
+    h3 {
+      margin: 0 0 12px 0;
+      font-size: 12px;
+      color: $text-secondary;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .amount {
+      font-size: 24px;
+      font-weight: 700;
+      color: $text-primary;
+
+      &.success {
+        color: $success-color;
+      }
+
+      &.positive {
+        color: $success-color;
+      }
+
+      &.negative {
+        color: $danger-color;
+      }
+    }
+
+    &.totals {
+      background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-color, 0.1));
+      border-color: $primary-color;
+    }
+  }
+}
+
+// ============================================================================
+// MODALS
+// ============================================================================
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+
+  .modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid $border-color;
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: $text-secondary;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        color: $text-primary;
+      }
+
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid $border-color;
+    background: $bg-light;
+
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancel {
+      background: white;
+      border: 1px solid $border-color;
+      color: $text-primary;
+
+      &:hover {
+        background: $bg-light;
+      }
+    }
+
+    .btn-submit {
+      background: $primary-color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: $primary-dark;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// FORMS
+// ============================================================================
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  .form-input,
+  select {
+    padding: 10px 12px;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    font-size: 13px;
+    color: $text-primary;
+    font-family: inherit;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    }
+
+    &:disabled {
+      background: $bg-light;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  select {
+    cursor: pointer;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+// ============================================================================
+// RESPONSIVE
+// ============================================================================
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+
+    .farm-selector {
+      flex-direction: column;
+      width: 100%;
+
+      .farm-dropdown {
+        max-width: none;
+        width: 100%;
+      }
+
+      .btn-add-farm {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .btn-refresh {
+      align-self: flex-start;
+    }
+  }
+
+  .dashboard-tabs {
+    .tab {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .operations-grid,
+  .livestock-grid,
+  .inventory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .financial-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .farmer-analytics-dashboard {
+    padding: 12px;
+  }
+
+  .page-header {
+    padding: 16px;
+
+    h1 {
+      font-size: 20px;
+    }
+  }
+
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .modal {
+    padding: 8px;
+
+    .modal-content {
+      max-width: 100%;
+    }
+
+    .modal-header {
+      padding: 16px;
+
+      h2 {
+        font-size: 16px;
+      }
+    }
+
+    .modal-body {
+      padding: 16px;
+    }
+  }
+
+  .financial-summary {
+    grid-template-columns: 1fr;
+  }
+}

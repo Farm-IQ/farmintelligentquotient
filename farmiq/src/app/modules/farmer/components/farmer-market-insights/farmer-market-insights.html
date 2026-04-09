@@ -1,0 +1,60 @@
+﻿<ion-content class="market-insights-container">
+  <div class="market-insights-wrapper">
+    <h2>Agricultural Market Intelligence</h2>
+
+    <ng-container *ngIf="loading()">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading market data...</p>
+    </ng-container>
+
+    <ng-container *ngIf="error()">
+      <ion-text color="danger">{{ error() }}</ion-text>
+    </ng-container>
+
+    <!-- Market Prices Section -->
+    <ng-container *ngIf="!loading() && !error()">
+      <div class="section">
+        <h3>Commodity Prices</h3>
+        <ion-list>
+          <ion-item *ngFor="let price of marketPrices()">
+            <div class="price-item">
+              <h4>{{ price.commodity | titlecase }}</h4>
+              <p class="price">KSH {{ price.price | number : '1.2-2' }}</p>
+              <p class="trend" [ngClass]="price.trend">
+                {{ price.trend | titlecase }} {{ price.change | number : '1.1-2' }}%
+              </p>
+            </div>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Farm Analysis Section -->
+      <div class="section" *ngIf="farmAnalysis()">
+        <h3>Farm Predictions</h3>
+        <div class="analysis-card">
+          <p><strong>Yield Forecast:</strong> {{ farmAnalysis().yield_prediction?.forecast || 'N/A' }} kg</p>
+          <p><strong>Weather Impact:</strong> 
+            <span [ngClass]="farmAnalysis().weather_impact?.optimal ? 'success' : 'warning'">
+              {{ farmAnalysis().weather_impact?.optimal ? 'Optimal' : 'Challenging' }}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Disease Risk Section -->
+      <div class="section" *ngIf="diseaseRisk()">
+        <h3>Disease Risk Assessment</h3>
+        <div class="risk-card" [ngClass]="'risk-' + diseaseRisk().risk_level">
+          <p><strong>Risk Level:</strong> {{ diseaseRisk().risk_level | titlecase }}</p>
+          <div *ngFor="let disease of diseaseRisk().diseases" class="disease-item">
+            <p>{{ disease.name | titlecase }}: {{ (disease.probability * 100) | number : '1.0-0' }}%</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!loading() && !error() && (marketPrices().length === 0)">
+      <p class="empty-state">No market data available at the moment.</p>
+    </ng-container>
+  </div>
+</ion-content>

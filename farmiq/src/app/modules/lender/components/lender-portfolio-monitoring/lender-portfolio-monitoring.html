@@ -1,0 +1,120 @@
+<div class="lender-portfolio-monitoring">
+  <header class="monitoring-header">
+    <h1>Portfolio Monitoring</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <div *ngIf="!loading && portfolioMetrics" class="monitoring-content">
+    <!-- Portfolio Overview -->
+    <div class="portfolio-overview">
+      <div class="overview-card">
+        <h3>Portfolio Size</h3>
+        <p class="metric-value">{{ portfolioMetrics.totalLoans }}</p>
+        <p class="metric-label">Total loans</p>
+      </div>
+      <div class="overview-card">
+        <h3>Outstanding Amount</h3>
+        <p class="metric-value">{{ portfolioMetrics.outstandingAmount | currency }}</p>
+        <p class="metric-label">Total disbursed</p>
+      </div>
+      <div class="overview-card">
+        <h3>Healthy Loans</h3>
+        <p class="metric-value">{{ getHealthPercentage() | number:'1.0-0' }}%</p>
+        <p class="metric-label">On-time performance</p>
+      </div>
+      <div class="overview-card">
+        <h3>Default Rate</h3>
+        <p class="metric-value warning">{{ getDefaultRate() | number:'1.0-0' }}%</p>
+        <p class="metric-label">Defaulted loans</p>
+      </div>
+    </div>
+
+    <!-- Loan Status Breakdown -->
+    <div class="status-breakdown">
+      <h3>Loan Status</h3>
+      <div class="status-chart">
+        <div class="status-item" *ngFor="let status of portfolioMetrics.statusBreakdown">
+          <div class="status-label">{{ status.status }}</div>
+          <div class="status-bar">
+            <div class="bar-fill" [style.backgroundColor]="getStatusColor(status.status)" [style.width.%]="(status.count / portfolioMetrics.totalLoans) * 100"></div>
+          </div>
+          <div class="status-count">{{ status.count }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loans List -->
+    <div class="loans-list">
+      <h3>Active Loans</h3>
+      <div class="loans-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Farmer Name</th>
+              <th>Loan Amount</th>
+              <th>Outstanding</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let loan of loansByStatus.slice(0, 10)" class="loan-row" [ngClass]="loan.status.toLowerCase()">
+              <td class="farmer-name">{{ loan.farmerName }}</td>
+              <td>{{ loan.loanAmount | currency }}</td>
+              <td class="outstanding">{{ loan.outstanding | currency }}</td>
+              <td>
+                <span class="status-badge" [style.backgroundColor]="getStatusColor(loan.status)">
+                  {{ loan.status }}
+                </span>
+              </td>
+              <td>{{ loan.dueDate | date }}</td>
+              <td class="actions-col">
+                <button (click)="selectLoan(loan.id)" class="action-btn">Details</button>
+                <button (click)="monitorLoan(loan.id)" class="action-btn secondary">Monitor</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Loan Details Panel -->
+    <div *ngIf="loanDetails" class="loan-details-panel">
+      <h3>Loan Details: {{ loanDetails.loanId }}</h3>
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Farmer Name</label>
+          <p>{{ loanDetails.farmerName }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Interest Rate</label>
+          <p>{{ loanDetails.interestRate }}%</p>
+        </div>
+        <div class="detail-item">
+          <label>Monthly Payment</label>
+          <p>{{ loanDetails.monthlyPayment | currency }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Remaining Term</label>
+          <p>{{ loanDetails.remainingMonths }} months</p>
+        </div>
+      </div>
+      <div class="payment-schedule" *ngIf="loanDetails.payments">
+        <h4>Recent Payments</h4>
+        <ul class="payments-list">
+          <li *ngFor="let payment of loanDetails.payments.slice(0, 5)" class="payment-item">
+            <span class="payment-date">{{ payment.date | date }}</span>
+            <span class="payment-amount">{{ payment.amount | currency }}</span>
+            <span class="payment-status" [ngClass]="payment.status.toLowerCase()">{{ payment.status }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

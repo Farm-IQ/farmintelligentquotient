@@ -1,0 +1,109 @@
+.performance-tracker {
+  padding: 20px;
+
+  h2 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .performance-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+
+    .stat-card {
+      padding: 20px;
+      text-align: center;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+      .label {
+        display: block;
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .value {
+        display: block;
+        font-size: 24px;
+        font-weight: bold;
+        color: #667eea;
+      }
+    }
+  }
+
+  .history-section {
+    padding: 20px;
+
+    h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: #999;
+    }
+
+    .review-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .date {
+          color: #666;
+          font-size: 14px;
+        }
+
+        .score-badge {
+          padding: 6px 12px;
+          border-radius: 4px;
+          font-weight: bold;
+          color: white;
+
+          &.level-excellent {
+            background-color: #4CAF50;
+          }
+
+          &.level-good {
+            background-color: #2196F3;
+          }
+
+          &.level-average {
+            background-color: #FF9800;
+          }
+
+          &.level-poor {
+            background-color: #f44336;
+          }
+        }
+      }
+
+      .comments {
+        margin: 8px 0;
+        color: #555;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}

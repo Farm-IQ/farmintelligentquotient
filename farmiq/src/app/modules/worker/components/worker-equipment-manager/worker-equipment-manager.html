@@ -1,0 +1,36 @@
+<div class="equipment-manager">
+  <h2>Equipment Management</h2>
+
+  <!-- Assigned Equipment -->
+  <div class="card assigned-section">
+    <h3>Assigned Equipment</h3>
+    <div *ngIf="assignedEquipment.length === 0" class="empty-state">
+      No equipment assigned
+    </div>
+    <div *ngFor="let item of assignedEquipment" class="equipment-item">
+      <div class="item-header">
+        <h4>{{ item.equipment_name }}</h4>
+        <span class="status-badge" [class]="'status-' + item.status">{{ item.status }}</span>
+      </div>
+      <p><strong>Code:</strong> {{ item.equipment_code }}</p>
+      <p><strong>Assigned:</strong> {{ item.assigned_date | date: 'MMM dd, yyyy' }}</p>
+      <button (click)="returnEquipment(item)" class="btn-warning">Return Equipment</button>
+    </div>
+  </div>
+
+  <!-- Available Equipment -->
+  <div class="card available-section">
+    <h3>Available Equipment</h3>
+    <div *ngIf="availableEquipment.length === 0" class="empty-state">
+      No equipment available
+    </div>
+    <div *ngFor="let item of availableEquipment" class="equipment-item">
+      <div class="item-header">
+        <h4>{{ item.equipment_name }}</h4>
+        <span class="type-badge">{{ item.equipment_type }}</span>
+      </div>
+      <p><strong>Code:</strong> {{ item.equipment_code }}</p>
+      <button (click)="assignEquipment(item)" class="btn-primary">Assign to Worker</button>
+    </div>
+  </div>
+</div>

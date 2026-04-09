@@ -1,0 +1,58 @@
+<!-- ============================================================================
+     LENDER FOOTER NAVIGATION - Bottom Navigation Bar
+     Router Links to All Lender Features
+     ============================================================================ -->
+
+<nav class="lender-footer-nav">
+  <ul class="nav-list">
+    <!-- Dashboard -->
+    <li class="nav-item" [class.active]="isActive('/lender')">
+      <a routerLink="/lender" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="home-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Dashboard</span>
+      </a>
+    </li>
+
+    <!-- Loans -->
+    <li class="nav-item" [class.active]="isActive('/lender/loans')">
+      <a routerLink="/lender/loans" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="card-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Loans</span>
+      </a>
+    </li>
+
+    <!-- Portfolio -->
+    <li class="nav-item" [class.active]="isActive('/lender/portfolio')">
+      <a routerLink="/lender/portfolio" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="briefcase-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Portfolio</span>
+      </a>
+    </li>
+
+    <!-- Risk Dashboard -->
+    <li class="nav-item" [class.active]="isActive('/lender/risk')">
+      <a routerLink="/lender/risk" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="warning-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Risk</span>
+      </a>
+    </li>
+
+    <!-- Settings -->
+    <li class="nav-item" [class.active]="isActive('/lender/settings')">
+      <a routerLink="/lender/settings" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="settings-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Settings</span>
+      </a>
+    </li>
+  </ul>
+</nav>

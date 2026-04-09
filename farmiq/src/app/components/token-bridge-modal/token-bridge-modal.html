@@ -1,0 +1,179 @@
+<div class="bridge-modal-overlay">
+  <div class="bridge-modal">
+    <!-- Header -->
+    <div class="bridge-header">
+      <button class="close-btn" (click)="dismissModal()">×</button>
+      <h2>🌉 Bridge Tokens to Hedera</h2>
+      <p class="subtitle">Move your M-Pesa purchased FIQ tokens to your Web3 wallet</p>
+    </div>
+
+    <!-- Confirmation Step -->
+    <div *ngIf="bridgeStep === 'confirmation'" class="bridge-content">
+      <div class="bridge-info">
+        <div class="info-card">
+          <span class="label">Available Balance</span>
+          <div class="amount">{{ availableBalance | number:'1.0-8' }} FIQ</div>
+          <p class="description">M-Pesa purchased tokens in Supabase</p>
+        </div>
+
+        <div class="arrow-down">↓</div>
+
+        <div class="info-card">
+          <span class="label">Connected Wallet</span>
+          <div class="wallet-address">
+            {{ connectedAccount?.address | slice:0:10 }}...{{ connectedAccount?.address | slice:-8 }}
+          </div>
+          <p class="description">
+            {{ connectedAccount?.provider | uppercase }} • {{ connectedAccount?.network }}
+          </p>
+        </div>
+      </div>
+
+      <form [formGroup]="bridgeForm" (ngSubmit)="bridgeTokens()" class="bridge-form">
+        <div class="form-group">
+          <label>Amount to Bridge (FIQ)</label>
+          <div class="amount-input-wrapper">
+            <input
+              type="number"
+              formControlName="amount"
+              step="0.00000001"
+              min="1"
+              [max]="availableBalance"
+              (change)="onAmountChange()"
+              class="amount-input"
+            />
+            <button
+              type="button"
+              class="max-btn"
+              (click)="bridgeForm.get('amount')?.setValue(availableBalance)"
+            >
+              MAX
+            </button>
+          </div>
+
+          <div class="amount-error" *ngIf="bridgeForm.get('amount')?.hasError('max')">
+            Amount exceeds available balance
+          </div>
+        </div>
+
+        <!-- Fee Information -->
+        <div class="fee-section">
+          <div class="fee-row">
+            <span>Amount to bridge:</span>
+            <span class="amount">{{ bridgeForm.get('amount')?.value || 0 | number:'1.0-8' }} FIQ</span>
+          </div>
+          <div class="fee-row">
+            <span>Bridge fee:</span>
+            <span class="amount fee">{{ bridgeFee | number:'1.0-8' }} FIQ</span>
+          </div>
+          <div class="fee-row total">
+            <span>You'll receive:</span>
+            <span class="amount">{{ finalAmount | number:'1.0-8' }} FIQ</span>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="terms-section">
+          <div class="checkbox-wrapper">
+            <input
+              type="checkbox"
+              id="agree-terms"
+              formControlName="agreeToTerms"
+              class="checkbox"
+            />
+            <label for="agree-terms" class="terms-text">
+              I understand that bridging transfers tokens from Supabase to Hedera blockchain and cannot be reversed.
+              Tokens will be visible in my Web3 wallet.
+            </label>
+          </div>
+          <div class="error" *ngIf="bridgeForm.get('agreeToTerms')?.hasError('required') && bridgeForm.get('agreeToTerms')?.touched">
+            You must agree to proceed
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button type="button" class="btn btn-secondary" (click)="dismissModal()">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!bridgeForm.valid"
+          >
+            Bridge Tokens
+          </button>
+        </div>
+      </form>
+
+      <!-- Bridge Benefits -->
+      <div class="benefits-section">
+        <h4>Why Bridge?</h4>
+        <ul>
+          <li>✓ Use tokens in DeFi protocols on Hedera</li>
+          <li>✓ Trade on Hedera DEXs</li>
+          <li>✓ Transfer between Web3 wallets</li>
+          <li>✓ On-chain transparency</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bridging Step -->
+    <div *ngIf="bridgeStep === 'bridging'" class="bridge-content bridging">
+      <div class="bridging-container">
+        <div class="spinner"></div>
+        <h3>Bridging Tokens...</h3>
+        <p>Please wait while we transfer your tokens to Hedera</p>
+        <p class="subtitle">This may take a few seconds</p>
+      </div>
+    </div>
+
+    <!-- Success Step -->
+    <div *ngIf="bridgeStep === 'success'" class="bridge-content success">
+      <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h3>Bridge Successful!</h3>
+        <p class="success-message">
+          {{ bridgeForm.get('amount')?.value | number:'1.0-8' }} FIQ have been transferred to your Hedera wallet
+        </p>
+
+        <div class="success-details">
+          <div class="detail-row">
+            <span>Transaction Hash:</span>
+            <code class="hash">{{ (bridgeService.lastBridgeTransaction() | json) | slice:0:50 }}...</code>
+          </div>
+          <div class="detail-row">
+            <span>Wallet:</span>
+            <span>{{ connectedAccount?.provider | uppercase }}</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" (click)="dismissModal()">
+          Done
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Step -->
+    <div *ngIf="bridgeStep === 'error'" class="bridge-content error">
+      <div class="error-container">
+        <div class="error-icon">⚠</div>
+        <h3>Bridge Failed</h3>
+        <p class="error-message">{{ bridgeError }}</p>
+
+        <div class="action-buttons">
+          <button type="button" class="btn btn-secondary" (click)="dismissModal()">
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="bridgeStep = 'confirmation'"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

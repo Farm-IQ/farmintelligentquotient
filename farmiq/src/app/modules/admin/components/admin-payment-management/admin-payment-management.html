@@ -1,0 +1,92 @@
+<div class="admin-payment-management">
+  <header class="payment-header">
+    <h1>Payment Management</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Payment Status Cards -->
+  <div class="payment-status-cards">
+    <div class="status-card">
+      <h3>Total Revenue</h3>
+      <p class="card-value">{{ formatCurrency(paymentStatus.totalRevenue) }}</p>
+      <p class="card-label">Platform earnings</p>
+    </div>
+    <div class="status-card">
+      <h3>Pending Payouts</h3>
+      <p class="card-value">{{ formatCurrency(paymentStatus.pendingPayouts) }}</p>
+      <p class="card-label">Awaiting processing</p>
+    </div>
+    <div class="status-card">
+      <h3>Completed</h3>
+      <p class="card-value">{{ formatCurrency(paymentStatus.completedPayouts) }}</p>
+      <p class="card-label">Processed payments</p>
+    </div>
+    <div class="status-card error">
+      <h3>Failed</h3>
+      <p class="card-value">{{ paymentStatus.failedPayments }}</p>
+      <p class="card-label">Failed transactions</p>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-section">
+    <select [(ngModel)]="filterStatus" class="filter-select">
+      <option value="all">All Payments</option>
+      <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
+      <option value="failed">Failed</option>
+    </select>
+  </div>
+
+  <!-- Payment Transactions -->
+  <div class="transactions-section" *ngIf="!loading">
+    <h2>Payment Transactions</h2>
+    <div class="transactions-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Recipient</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let txn of paymentTransactions">
+            <td>{{ txn.id }}</td>
+            <td>{{ txn.recipientName }}</td>
+            <td>{{ formatCurrency(txn.amount) }}</td>
+            <td><span class="status-badge" [style.backgroundColor]="getStatusColor(txn.status)">{{ txn.status }}</span></td>
+            <td>{{ txn.date | date:'short' }}</td>
+            <td class="actions">
+              <button *ngIf="txn.status === 'pending'" (click)="processPayment(txn.id)" [disabled]="processing" class="btn-process">Process</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Payment Summary -->
+  <div class="summary-section">
+    <h2>Payment Summary</h2>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <p class="summary-label">Last Run</p>
+        <p class="summary-value">{{ paymentStatus.lastPaymentRun | date:'short' }}</p>
+      </div>
+      <div class="summary-item">
+        <p class="summary-label">Success Rate</p>
+        <p class="summary-value">{{ ((paymentStatus.completedPayouts / (paymentStatus.completedPayouts + paymentStatus.failedPayments)) * 100) | number:'1.0-0' }}%</p>
+      </div>
+    </div>
+  </div>
+</div>

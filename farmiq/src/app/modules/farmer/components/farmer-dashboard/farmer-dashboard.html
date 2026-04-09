@@ -1,0 +1,137 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Farm Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshDashboard()" [disabled]="refreshing()">
+        <ion-icon name="refresh" [class.spinning]="refreshing()"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Loading State -->
+  <ion-spinner *ngIf="loading()" name="crescent" class="loading-spinner"></ion-spinner>
+
+  <!-- Error State -->
+  <ion-card *ngIf="error()" class="error-card">
+    <ion-card-header>
+      <ion-card-title>Error Loading Dashboard</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ error() }}</p>
+      <ion-button expand="block" (click)="refreshDashboard()">Try Again</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Welcome Section -->
+  <div class="welcome-section ion-padding">
+    <h1>Welcome, {{ farmData()?.farm_name || 'Farmer' }}! 👋</h1>
+    <p class="subtitle">Here's your farm status at a glance</p>
+  </div>
+
+  <!-- Quick Stats Grid -->
+  <div class="stats-grid ion-padding-horizontal">
+    <div *ngFor="let stat of quickStats()" class="stat-card" [ngClass]="'stat-' + stat.color">
+      <div class="stat-icon">{{ stat.icon }}</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-label">{{ stat.title }}</div>
+        <div *ngIf="stat.subtext" class="stat-subtext">{{ stat.subtext }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Farm Health Section -->
+  <ion-card class="ion-margin">
+    <ion-card-header>
+      <ion-card-title>🌾 Farm Health</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="health-item">
+        <div class="health-label">🌱 Soil Health</div>
+        <ion-progress-bar value="0.75" color="success"></ion-progress-bar>
+        <div class="health-status">Excellent - NPK levels optimal</div>
+      </div>
+      <div class="health-item">
+        <div class="health-label">💧 Water Level</div>
+        <ion-progress-bar value="0.65" color="primary"></ion-progress-bar>
+        <div class="health-status">Good - Recent rainfall detected</div>
+      </div>
+      <div class="health-item">
+        <div class="health-label">🌱 Crop Growth</div>
+        <ion-progress-bar value="0.85" color="success"></ion-progress-bar>
+        <div class="health-status">Excellent - 85% of goal achieved</div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Alerts Section -->
+  <div *ngIf="alertsNotifications().length > 0" class="alerts-section ion-padding-horizontal">
+    <h3>⚠️ Alerts & Notifications</h3>
+    <div *ngFor="let alert of alertsNotifications()" class="alert-item" [ngClass]="'alert-' + alert.type">
+      <ion-icon name="alert-circle"></ion-icon>
+      <div>
+        <div class="alert-title">{{ alert.title }}</div>
+        <div class="alert-message">{{ alert.message }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <ion-card class="ion-margin">
+    <ion-card-header>
+      <ion-card-title>📋 Recent Activities</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="inset">
+        <ion-item *ngFor="let activity of (recentActivities() || []).slice(0, 5)">
+          <ion-icon name="checkmark-circle" color="success" slot="start"></ion-icon>
+          <ion-label>{{ activity }}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Credit Score Widget -->
+  <ion-card class="ion-margin">
+    <ion-card-header>
+      <ion-card-title>💳 Credit Score</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="credit-display">
+        <div class="score-number">{{ creditScore()?.score || 0 }}/850</div>
+        <div class="score-label">{{ creditScore()?.riskLevel || 'Calculating...' }}</div>
+      </div>
+      <ion-button expand="block" color="secondary">View Loan Options</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- FarmSuite Insights Preview -->
+  <ion-card class="ion-margin">
+    <ion-card-header>
+      <ion-card-title>🧩 FarmSuite Insights</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="empty-state">
+        <p>FarmSuite insights will be available in the Market Insights section</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Analytics Link -->
+  <ion-card class="ion-margin">
+    <ion-card-header>
+      <ion-card-title>📊 Farm Analytics</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>View detailed yield analysis, soil health reports, and weather impact assessments</p>
+      <ion-button expand="block">View Analytics</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <div style="height: 100px;"></div>
+</ion-content>

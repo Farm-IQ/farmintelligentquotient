@@ -1,0 +1,58 @@
+<!-- ============================================================================
+     FARMER FOOTER NAVIGATION - Bottom Navigation Bar
+     Router Links to All Dashboards
+     ============================================================================ -->
+
+<nav class="farmer-footer-nav">
+  <ul class="nav-list">
+    <!-- Home/Dashboard -->
+    <li class="nav-item" [class.active]="isActive('/farmer')">
+      <a routerLink="/farmer" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="home-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Home</span>
+      </a>
+    </li>
+
+    <!-- Analytics -->
+    <li class="nav-item" [class.active]="isActive('/farmer/analytics')">
+      <a routerLink="/farmer/analytics" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="analytics-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Analytics</span>
+      </a>
+    </li>
+
+    <!-- Credit Score -->
+    <li class="nav-item" [class.active]="isActive('/farmer/credit-score')">
+      <a routerLink="/farmer/credit-score" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Credit</span>
+      </a>
+    </li>
+
+    <!-- FarmSuite Market Insights -->
+    <li class="nav-item" [class.active]="isActive('/farmer/market-insights')">
+      <a routerLink="/farmer/market-insights" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="trending-up-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Insights</span>
+      </a>
+    </li>
+
+    <!-- Wallet -->
+    <li class="nav-item" [class.active]="isActive('/farmer/wallet')">
+      <a routerLink="/farmer/wallet" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Wallet</span>
+      </a>
+    </li>
+  </ul>
+</nav>

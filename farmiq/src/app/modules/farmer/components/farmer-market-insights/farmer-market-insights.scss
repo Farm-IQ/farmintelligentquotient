@@ -1,0 +1,16 @@
+.market-insights-container {
+  padding: 1rem;
+}
+
+.market-insights-container ion-card {
+  margin-bottom: 0.75rem;
+}
+
+.market-insights-container ion-list {
+  margin-top: 0.5rem;
+}
+
+.market-insights-container .error {
+  color: var(--ion-color-danger);
+  font-weight: 600;
+}

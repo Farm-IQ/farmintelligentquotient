@@ -1,0 +1,232 @@
+.task-manager {
+  padding: 20px;
+
+  h2 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .task-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+
+    .stat {
+      padding: 15px;
+      text-align: center;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+      .label {
+        display: block;
+        color: #666;
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+
+      .value {
+        display: block;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+
+        &.pending {
+          color: #FF9800;
+        }
+
+        &.progress {
+          color: #2196F3;
+        }
+
+        &.completed {
+          color: #4CAF50;
+        }
+      }
+    }
+  }
+
+  .form-section {
+    margin-bottom: 30px;
+    padding: 20px;
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    input, select, textarea {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+
+      &:focus {
+        outline: none;
+        border-color: #FF9800;
+        box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+      }
+    }
+  }
+
+  .btn-primary {
+    background-color: #FF9800;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+      background-color: #F57C00;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  .tasks-section {
+    padding: 20px;
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: #999;
+    }
+
+    .task-item {
+      padding: 15px;
+      border-left: 4px solid #ddd;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      background: #f9f9f9;
+
+      &.status-pending {
+        border-left-color: #FF9800;
+        background-color: rgba(255, 152, 0, 0.05);
+      }
+
+      &.status-in_progress {
+        border-left-color: #2196F3;
+        background-color: rgba(33, 150, 243, 0.05);
+      }
+
+      &.status-completed {
+        border-left-color: #4CAF50;
+        background-color: rgba(76, 175, 80, 0.05);
+      }
+
+      &.status-cancelled {
+        border-left-color: #999;
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        h4 {
+          margin: 0;
+          color: #333;
+        }
+
+        .priority-badge {
+          padding: 4px 10px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+          color: white;
+
+          &.priority-low {
+            background-color: #4CAF50;
+          }
+
+          &.priority-medium {
+            background-color: #FF9800;
+          }
+
+          &.priority-high {
+            background-color: #f44336;
+          }
+
+          &.priority-urgent {
+            background-color: #9C27B0;
+          }
+        }
+      }
+
+      .description {
+        color: #666;
+        font-size: 14px;
+        margin: 8px 0;
+      }
+
+      .task-meta {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+        font-size: 13px;
+
+        .due-date {
+          color: #666;
+        }
+
+        .status-badge {
+          background-color: white;
+          padding: 2px 8px;
+          border-radius: 3px;
+          text-transform: capitalize;
+          font-weight: 500;
+        }
+      }
+
+      .task-actions {
+        .status-select {
+          padding: 6px 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 13px;
+          cursor: pointer;
+
+          &:focus {
+            outline: none;
+            border-color: #2196F3;
+          }
+        }
+      }
+    }
+  }
+
+  .card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}

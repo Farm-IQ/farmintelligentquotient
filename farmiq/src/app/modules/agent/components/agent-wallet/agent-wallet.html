@@ -1,0 +1,63 @@
+<div class="agent-wallet">
+  <header class="wallet-header">
+    <h1>Agent Wallet & Commission</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Balance Cards -->
+  <div class="balance-cards">
+    <div class="balance-card available">
+      <p class="card-label">Available Balance</p>
+      <p class="card-amount">{{ formatCurrency(walletBalance) }}</p>
+    </div>
+    <div class="balance-card earned">
+      <p class="card-label">Commission Earned</p>
+      <p class="card-amount">{{ formatCurrency(commissionEarned) }}</p>
+    </div>
+    <div class="balance-card pending">
+      <p class="card-label">Commission Pending</p>
+      <p class="card-amount">{{ formatCurrency(commissionPending) }}</p>
+    </div>
+  </div>
+
+  <!-- Commission History -->
+  <div class="commission-section">
+    <h3>Commission History</h3>
+    <div class="commission-list">
+      <div *ngFor="let commission of commissionHistory" class="commission-item">
+        <div class="commission-header">
+          <p class="commission-description">{{ commission.description }}</p>
+          <span class="commission-amount" [style.color]="getCommissionStatus(commission.status)">
+            +{{ formatCurrency(commission.amount) }}
+          </span>
+        </div>
+        <div class="commission-footer">
+          <p class="commission-date">{{ commission.date | date }}</p>
+          <span class="status-badge" [style.backgroundColor]="getCommissionStatus(commission.status)">
+            {{ commission.status }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="transactions-section" *ngIf="transactions.length > 0">
+    <h3>Recent Transactions</h3>
+    <div class="transactions-list">
+      <div *ngFor="let txn of transactions" class="transaction-item">
+        <div class="txn-header">
+          <p class="txn-description">{{ txn.description }}</p>
+          <p class="txn-amount" [class.debit]="txn.type === 'debit'">{{ txn.type === 'credit' ? '+' : '-' }} {{ formatCurrency(txn.amount) }}</p>
+        </div>
+        <p class="txn-date">{{ txn.date | date }}</p>
+      </div>
+    </div>
+  </div>
+</div>

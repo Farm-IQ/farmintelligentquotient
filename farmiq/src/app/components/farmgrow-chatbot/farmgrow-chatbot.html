@@ -1,0 +1,228 @@
+<!-- FarmGrow Chatbot Component - Modern AI Assistant -->
+<div class="farmgrow-chatbot-container">
+  <!-- Header with Navigation -->
+  <div class="chatbot-header">
+    <div class="header-left">
+      <button class="btn-go-back" (click)="goBackToDashboard()" title="Go back to dashboard">
+        <span class="back-arrow">←</span>
+        <span class="back-text">Back</span>
+      </button>
+      <div class="header-title">
+        <h1>🤖 FarmGrow AI</h1>
+        <p class="header-subtitle">Your Smart Farming Assistant</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="btn-clear" (click)="startNewConversation()" title="Start new conversation">
+        <span>✨</span>
+        <span class="btn-text">New Chat</span>
+      </button>
+      <button class="btn-menu" title="Menu">
+        <span>⋮</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Welcome/Intro Screen -->
+  <div class="intro-screen" *ngIf="messages.length === 0 && !isLoading">
+    <div class="intro-container">
+      <div class="intro-logo">
+        <div class="logo-animation">🤖</div>
+      </div>
+      
+      <div class="intro-content">
+        <h1 class="intro-title">Welcome to FarmGrow AI</h1>
+        <p class="intro-subtitle">Your Personal Farming Assistant</p>
+        <p class="intro-description">Ask about crop management, pest control, soil health, market prices, and get instant expert advice powered by AI</p>
+
+        <div class="quick-features">
+          <div class="feature">
+            <span class="feature-icon">🌾</span>
+            <span class="feature-text">Crop Advice</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🐛</span>
+            <span class="feature-text">Pest Control</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🌱</span>
+            <span class="feature-text">Soil Health</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">📊</span>
+            <span class="feature-text">Market Trends</span>
+          </div>
+        </div>
+
+        <div class="intro-suggestions">
+          <p class="suggestions-title">Quick Examples:</p>
+          <div class="suggestion-grid">
+            <button class="suggestion-card" (click)="sendSampleMessage('How do I grow maize successfully?')">
+              <span class="suggestion-emoji">🌽</span>
+              <span class="suggestion-text">How do I grow maize successfully?</span>
+            </button>
+            <button class="suggestion-card" (click)="sendSampleMessage('What pests affect tomato plants?')">
+              <span class="suggestion-emoji">🍅</span>
+              <span class="suggestion-text">What pests affect tomato plants?</span>
+            </button>
+            <button class="suggestion-card" (click)="sendSampleMessage('How do I improve my soil quality?')">
+              <span class="suggestion-emoji">🌱</span>
+              <span class="suggestion-text">How do I improve my soil quality?</span>
+            </button>
+            <button class="suggestion-card" (click)="sendSampleMessage('When should I harvest coffee beans?')">
+              <span class="suggestion-emoji">☕</span>
+              <span class="suggestion-text">When should I harvest coffee beans?</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="intro-footer">
+          <p class="footer-text">💡 Tip: Be specific about your crops and location for better advice</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat View -->
+  <div class="chat-view" *ngIf="messages.length > 0 || isLoading">
+    <!-- Messages Container -->
+    <div class="messages-container" #messagesContainer>
+      <div 
+        class="message" 
+        *ngFor="let msg of messages; let i = index"
+        [class.user-message]="msg.role === 'user'"
+        [class.ai-message]="msg.role === 'assistant'"
+        [@slideIn]>
+        
+        <div class="message-avatar" [class.user-avatar]="msg.role === 'user'">
+          {{ msg.role === 'user' ? '👨‍🌾' : '🤖' }}
+        </div>
+        
+        <div class="message-content">
+          <div class="message-bubble">
+            <!-- Render markdown for AI responses, plain text for user -->
+            <div *ngIf="msg.role === 'assistant'" class="message-text markdown-content" [innerHTML]="renderMarkdown(msg.content)"></div>
+            <p *ngIf="msg.role === 'user'" class="message-text">{{ msg.content }}</p>
+            <span class="message-time\">{{ msg.displayTime }}</span>
+          </div>
+          
+          <!-- Message Actions -->
+          <div class="message-actions" *ngIf="msg.role === 'assistant'">
+            <button class="action-btn copy" title="Copy" (click)="copyToClipboard(msg.content)">
+              <span>📋</span>
+            </button>
+            <button class="action-btn thumbs-up" title="Helpful">
+              <span>👍</span>
+            </button>
+            <button class="action-btn thumbs-down" title="Not helpful">
+              <span>👎</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Loading Indicator -->
+      <div class="message ai-message loading-message" *ngIf="isLoading">
+        <div class="message-avatar">🤖</div>
+        <div class="message-content">
+          <div class="message-bubble">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <p class="typing-text">FarmGrow is thinking...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Panel -->
+    <div class="error-panel" *ngIf="error" [@slideDown]>
+      <div class="error-content">
+        <span class="error-icon">⚠️</span>
+        <div class="error-text">
+          <p class="error-title">{{ error.title || 'Error' }}</p>
+          <p class="error-message">{{ error.message }}</p>
+        </div>
+        <button class="error-close" (click)="dismissError()" title="Close">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Bar (Sticky at Bottom) -->
+  <div class="input-bar">
+    <div class="input-bar-content">
+      <!-- Model Selector (Optional) -->
+      <div class="model-selector" *ngIf="availableModels && availableModels.length > 1">
+        <select class="model-dropdown" [(ngModel)]="selectedModel" (change)="onModelChange()">
+          <option value="">Auto</option>
+          <option *ngFor="let model of availableModels" [value]="model.name">
+            {{ model.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Input Field -->
+      <form [formGroup]="chatForm" (ngSubmit)="onSubmit()" class="input-form">
+        <div class="input-wrapper">
+          <textarea
+            formControlName="message"
+            placeholder="Ask FarmGrow anything about farming..."
+            class="input-field"
+            (keydown.enter)="$any($event).shiftKey ? null : onSubmit()"
+            rows="1"></textarea>
+          <div class="input-hint" *ngIf="!isFormValid && chatForm.get('message')?.touched">
+            Message must be 3-500 characters
+          </div>
+        </div>
+      </form>
+
+      <!-- Action Buttons -->
+      <div class="input-actions">
+        <!-- Plus Button for Media Upload -->
+        <button 
+          class="btn-action btn-media" 
+          (click)="openMediaUpload()"
+          [disabled]="isLoading"
+          *ngIf="!isLoading"
+          title="Add image or audio">
+          <span>📎</span>
+        </button>
+
+        <!-- Cancel Button (shown while loading) -->
+        <button 
+          class="btn-action btn-cancel" 
+          (click)="cancelRequest()"
+          *ngIf="isLoading"
+          title="Cancel request">
+          <span>⏹️</span>
+        </button>
+
+        <!-- Send Button -->
+        <button 
+          class="btn-action btn-send" 
+          (click)="onSubmit()"
+          [disabled]="!isFormValid || isLoading"
+          title="Send message">
+          <span>⬆️</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hidden File Input -->
+    <input 
+      type="file" 
+      #fileInput 
+      hidden 
+      (change)="onFileSelected($event)"
+      accept="image/*,audio/*"
+      title="Upload image or audio">
+
+    <!-- Input Bar Footer Info -->
+    <div class="input-bar-footer">
+      <p class="footer-info">FarmGrow uses AI to provide farming advice. Always verify critical decisions.</p>
+    </div>
+  </div>
+</div>

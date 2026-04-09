@@ -1,0 +1,109 @@
+<div class="cooperative-dashboard">
+  <header class="dashboard-header">
+    <h1>Cooperative Dashboard</h1>
+    <div class="header-actions">
+      <button class="btn-chat" (click)="goToChatbot()" title="FarmGrow Chat Assistant">
+        <span class="chat-icon">💬</span>
+        <span class="btn-text">FarmGrow</span>
+      </button>
+      <button class="btn-signout" (click)="signOut()" title="Sign out">
+        <span class="signout-icon">🚪</span>
+        <span class="btn-text">Sign Out</span>
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading cooperative data...</p>
+  </div>
+
+  <div *ngIf="error" class="error-alert">
+    <strong>Error:</strong> {{ error }}
+  </div>
+
+  <div *ngIf="!loading && cooperativeData" class="dashboard-content">
+    <!-- Welcome Card -->
+    <div class="welcome-card">
+      <h2>{{ cooperativeData.name }}</h2>
+      <p class="subtitle">Members: {{ getMemberCount() }} | Avg Score: {{ getAverageScore() }}</p>
+      <p class="description">{{ cooperativeData.description }}</p>
+    </div>
+
+    <!-- Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">📊</div>
+        <div class="metric-info">
+          <h3>Group FIQ Score</h3>
+          <p class="metric-value">{{ getAverageScore() }}</p>
+          <p class="metric-label">Average across members</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">👥</div>
+        <div class="metric-info">
+          <h3>Total Members</h3>
+          <p class="metric-value">{{ getMemberCount() }}</p>
+          <p class="metric-label">Active cooperative members</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">💰</div>
+        <div class="metric-info">
+          <h3>Group Revenue</h3>
+          <p class="metric-value">{{ cooperativeData.totalRevenue | currency }}</p>
+          <p class="metric-label">Total this season</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">🎯</div>
+        <div class="metric-info">
+          <h3>Group Risk Level</h3>
+          <p class="metric-value" [style.color]="getRiskColor(cooperativeData.riskLevel)">
+            {{ cooperativeData.riskLevel }}
+          </p>
+          <p class="metric-label">Portfolio assessment</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+      <div class="stat-item">
+        <span class="stat-label">Active Loans:</span>
+        <span class="stat-value">{{ cooperativeData.activeLoans }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Pending Applications:</span>
+        <span class="stat-value">{{ cooperativeData.pendingApplications }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Group Wallet Balance:</span>
+        <span class="stat-value">{{ cooperativeData.walletBalance | currency }}</span>
+      </div>
+    </div>
+
+    <!-- Top Insights -->
+    <div class="insights-section" *ngIf="insights">
+      <h3>Key Insights</h3>
+      <ul class="insights-list">
+        <li *ngFor="let insight of insights.topInsights">
+          <span class="insight-icon">💡</span>
+          <span class="insight-text">{{ insight }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="action-btn primary">View Members</button>
+      <button class="action-btn">Bulk Scoring</button>
+      <button class="action-btn">Manage Finance</button>
+      <button class="action-btn">View Reports</button>
+    </div>
+  </div>
+</div>

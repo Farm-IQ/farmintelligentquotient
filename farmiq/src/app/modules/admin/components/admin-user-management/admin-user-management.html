@@ -1,0 +1,76 @@
+<div class="admin-user-management">
+  <header class="management-header">
+    <h1>User Management</h1>
+    <button (click)="showUserForm = !showUserForm" class="btn-primary">+ Add User</button>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Search and Filter -->
+  <div class="search-filter">
+    <input [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" type="text" placeholder="Search users..." class="search-input">
+    <select [(ngModel)]="filterRole" (ngModelChange)="onRoleFilterChange()" class="filter-select">
+      <option value="all">All Roles</option>
+      <option value="farmer">Farmer</option>
+      <option value="cooperative">Cooperative</option>
+      <option value="lender">Lender</option>
+      <option value="agent">Agent</option>
+      <option value="admin">Admin</option>
+    </select>
+  </div>
+
+  <!-- Users Table -->
+  <div class="users-table" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers" (click)="selectUser(user)">
+          <td>{{ user.fullName }}</td>
+          <td>{{ user.email }}</td>
+          <td><span class="role-badge" [style.backgroundColor]="getRoleColor(user.role)">{{ user.role }}</span></td>
+          <td><span class="status-badge" [style.backgroundColor]="getStatusColor(user.status)">{{ user.status }}</span></td>
+          <td class="actions">
+            <button *ngIf="user.status === 'active'" (click)="suspendUser(user.id)" class="btn-warning">Suspend</button>
+            <button *ngIf="user.status === 'suspended'" (click)="reactivateUser(user.id)" class="btn-success">Reactivate</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- User Details -->
+  <div *ngIf="selectedUser" class="user-details-card">
+    <h3>{{ selectedUser.fullName }}</h3>
+    <div class="details-grid">
+      <div class="detail-item">
+        <label>Email</label>
+        <p>{{ selectedUser.email }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Phone</label>
+        <p>{{ selectedUser.phone }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Current Role</label>
+        <p>{{ selectedUser.role }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Status</label>
+        <p [style.color]="getStatusColor(selectedUser.status)">{{ selectedUser.status }}</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="agent-verification">
+  <header class="verification-header">
+    <h1>KYC Verification</h1>
+    <p class="subtitle">{{ pendingVerifications.length }} pending verifications</p>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <div *ngIf="!loading && currentVerification" class="verification-content">
+    <!-- Farmer Details -->
+    <div class="farmer-details-card">
+      <h3>Farmer Information</h3>
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Name</label>
+          <p>{{ currentVerification.farmerName }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Email</label>
+          <p>{{ currentVerification.email }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Phone</label>
+          <p>{{ currentVerification.phone }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Farm Location</label>
+          <p>{{ currentVerification.farmLocation }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents -->
+    <div class="documents-card">
+      <h3>Required Documents</h3>
+      <div class="documents-list">
+        <div class="document-item" *ngFor="let doc of currentVerification.documents">
+          <div class="doc-header">
+            <span class="doc-name">{{ doc.name }}</span>
+            <span class="doc-status" [style.color]="getDocumentStatus(doc.type) === 'verified' ? '#4CAF50' : '#FFC107'">
+              {{ getDocumentStatus(doc.type) }}
+            </span>
+          </div>
+          <p class="doc-type">Type: {{ doc.type }}</p>
+          <a href="#" class="doc-link">View Document</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verification Form -->
+    <div class="verification-form-card">
+      <h3>Verification Decision</h3>
+      <form (ngSubmit)="submitVerification()">
+        <div class="form-group approval">
+          <label>
+            <input [(ngModel)]="verificationForm.approved" name="approved" type="checkbox">
+            <span class="checkbox-label">Approve Verification</span>
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="!verificationForm.approved">
+          <label>Rejection Reason *</label>
+          <textarea [(ngModel)]="verificationForm.rejectionReason" name="rejectionReason" rows="4" placeholder="Explain why verification is rejected..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Comments</label>
+          <textarea [(ngModel)]="verificationForm.comments" name="comments" rows="3" placeholder="Additional comments..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="verifying" class="btn-primary">
+            {{ verifying ? 'Submitting...' : 'Submit Verification' }}
+          </button>
+          <button type="button" (click)="skipVerification()" class="btn-secondary">Skip</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !currentVerification" class="no-verifications">
+    <p>No pending verifications</p>
+  </div>
+</div>

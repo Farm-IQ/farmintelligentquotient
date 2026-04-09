@@ -1,0 +1,423 @@
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="navbar-container">
+    <!-- Logo -->
+    <a routerLink="/" class="navbar-brand" (click)="navigateHome()">
+      <img ngSrc="/logo.png" alt="FarmIQ Logo" class="logo-image" width="140" height="40" loading="lazy" (load)="onImageLoad($event)" (error)="onImageError($event)" />
+    </a>
+
+    <!-- Hamburger Menu Toggle (SM screens) -->
+    <button class="navbar-toggle" aria-label="Toggle navigation" (click)="toggleMobileMenu()" [attr.aria-expanded]="showMobileMenu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 6h18M3 12h18M3 18h18" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Full Navigation Menu (LG screens) -->
+    <div class="navbar-menu" role="navigation" aria-label="Main navigation">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#testimonials" class="nav-link">Testimonials</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+    </div>
+
+    <!-- Desktop & Tablet Actions -->
+    <div class="navbar-actions">
+      <a routerLink="/login" class="btn-text">Sign In</a>
+      <a routerLink="/signup" class="btn btn-primary">Get Started</a>
+    </div>
+  </div>
+  
+  <!-- Mobile Menu Backdrop -->
+  <div class="mobile-backdrop" [class.visible]="showMobileMenu" (click)="toggleMobileMenu()"></div>
+
+  <!-- Mobile Slide-in Drawer Menu (SM screens) -->
+  <div class="mobile-menu drawer" [class.open]="showMobileMenu" role="dialog" aria-modal="true">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-close" (click)="toggleMobileMenu()" aria-label="Close menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mobile-menu-content">
+      <a href="#features" class="mobile-link" (click)="scrollToSection('features'); $event.preventDefault()">Features</a>
+      <a href="#testimonials" class="mobile-link" (click)="scrollToSection('testimonials'); $event.preventDefault()">Testimonials</a>
+      <a href="#pricing" class="mobile-link" (click)="scrollToSection('pricing'); $event.preventDefault()">Pricing</a>
+    </div>
+    <div class="mobile-actions">
+      <a routerLink="/login" class="mobile-link btn-text" (click)="closeMenu()">Sign In</a>
+      <a routerLink="/signup" class="mobile-link btn btn-primary" (click)="closeMenu()">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>FarmIQ: Smart Farming for East Africa</h1>
+    <p>Drive productivity with precision agritech, UPI/USSD-native workflow, and tokenized producer credit.</p>
+    <div class="hero-cta">
+      <a routerLink="/signup" class="btn btn-primary btn-lg">Join FarmIQ for Free</a>
+      <a href="#features" class="btn btn-outline btn-lg">Explore Capabilities</a>
+    </div>
+    <div class="hero-features">
+      <span class="feature-badge">✓ Farmer, Worker, Admin Roles</span>
+      <span class="feature-badge">✓ M-Pesa Fusion + Local Wallet</span>
+      <span class="feature-badge">✓ FIQ Utility Token Ready</span>
+    </div>
+  </div>
+  <div class="hero-illustration">
+    <div class="illustration-box">
+      <span class="big-emoji">🚜</span>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Powerful Features for Modern Farming</h2>
+      <p>Everything you need to succeed in the digital agricultural economy</p>
+    </div>
+    <div class="features-grid">
+      <div *ngFor="let feature of features" class="feature-card">
+        <div class="feature-icon" [style.background-color]="feature.color" role="img" [attr.aria-label]="feature.title">
+          {{ feature.icon }}
+        </div>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+        <a href="#" class="feature-link" (click)="openFeatureModal(feature); $event.preventDefault()">Learn more →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <h2>How FarmIQ Works</h2>
+      <p>Get started in just 4 simple steps</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Sign Up</h3>
+        <p>Create your FarmIQ account with email or USSD</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Connect Wallet</h3>
+        <p>Link MetaMask or HashPack for blockchain features</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Get Score</h3>
+        <p>Receive your FIQ credit score instantly</p>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Scale Farm Operations</h3>
+        <p>Leverage FarmSuite data, token rewards, and automated crop planning to boost yields</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2>Simple, Transparent Pricing</h2>
+      <p>Choose the plan that works best for your farm</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Free Tier -->
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Free</h3>
+          <p class="price">0 FQ<span>/month</span></p>
+          <p class="price-subtitle">Start your farming journey</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✓ Farm profile setup</li>
+          <li>✓ Basic crop monitoring</li>
+          <li>✓ Market price updates</li>
+          <li>✓ Mobile app access</li>
+          <li>✓ Community forum access</li>
+          <li>✗ Credit scoring</li>
+          <li>✗ Advanced analytics</li>
+          <li>✗ vSAP marketplace</li>
+        </ul>
+        <a routerLink="/signup" class="btn btn-outline btn-block">Start Free</a>
+      </div>
+
+      <!-- Smallholder Tier -->
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Smallholder</h3>
+          <p class="price">100 FQ<span>/month</span></p>
+          <p class="price-subtitle">For small to medium farms</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✓ Everything in Free +</li>
+          <li>✓ AI credit scoring</li>
+          <li>✓ Basic farm analytics</li>
+          <li>✓ Real-time market data</li>
+          <li>✓ Crop health alerts</li>
+          <li>✓ Weather forecasting</li>
+          <li>✗ Advanced AI recommendations</li>
+          <li>✗ vSAP marketplace</li>
+        </ul>
+        <a routerLink="/signup" class="btn btn-primary btn-block">Get Started</a>
+      </div>
+
+      <!-- Basic Tier -->
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Basic</h3>
+          <p class="price">300 FQ<span>/month</span></p>
+          <p class="price-subtitle">For growing farms</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✓ Everything in Smallholder +</li>
+          <li>✓ Supply chain tracking</li>
+          <li>✓ Soil health monitoring</li>
+          <li>✓ Water usage optimization</li>
+          <li>✓ Yield prediction</li>
+          <li>✓ Production scheduling</li>
+          <li>✓ Basic blockchain features</li>
+          <li>✗ vSAP marketplace access</li>
+        </ul>
+        <a routerLink="/signup" class="btn btn-primary btn-block">Get Started</a>
+      </div>
+
+      <!-- Pro Tier -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-header">
+          <h3>Pro</h3>
+          <p class="price">800 FQ<span>/month</span></p>
+          <p class="price-subtitle">Best for serious farmers</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✓ Everything in Basic +</li>
+          <li>✓ AI crop recommendations</li>
+          <li>✓ Pest & disease detection</li>
+          <li>✓ Input supplier network</li>
+          <li>✓ Export-ready reports</li>
+          <li>✓ Premium blockchain features</li>
+          <li>✓ vSAP Marketplace Access</li>
+          <li>✓ Priority support</li>
+          <li>✓ Tokenized credit lines</li>
+        </ul>
+        <a routerLink="/signup" class="btn btn-primary btn-block">Start Free Trial</a>
+      </div>
+
+      <!-- Enterprise Tier -->
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Enterprise</h3>
+          <p class="price">Custom<span>/month</span></p>
+          <p class="price-subtitle">For cooperatives & groups</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✓ Everything in Pro +</li>
+          <li>✓ Custom integrations</li>
+          <li>✓ Group management tools</li>
+          <li>✓ Cooperative pricing</li>
+          <li>✓ White-label solutions</li>
+          <li>✓ API access & webhooks</li>
+          <li>✓ Multi-farm management</li>
+          <li>✓ Dedicated account manager</li>
+          <li>✓ 24/7 support</li>
+        </ul>
+        <button class="btn btn-outline btn-block" (click)="contactSales()">Contact Sales</button>
+      </div>
+    </div>
+    <div class="pricing-note">
+      <p><strong>FQ Token Economy:</strong> FarmIQ Tokens (FQ) power our decentralized agricultural ecosystem. Use FQ to pay monthly subscriptions, access vSAP marketplace, participate in credit protocols, and earn rewards for data contributions. Start accumulating FQ tokens today and unlock exclusive farming benefits. Tokens can be purchased with M-Pesa (and soon via other payment methods) at 1 KSH = 1 FQ. Your FQ balance is your gateway to AI-powered farm insights, blockchain-verified credit, and tokenized producer credit lines.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Buy FQ Tokens Section -->
+<section class="buy-tokens">
+  <div class="container">
+    <div class="section-header">
+      <h2>Get FarmIQ Tokens</h2>
+      <p>Buy FQ tokens and unlock premium features</p>
+    </div>
+    <div class="tokens-content">
+      <div class="token-exchange">
+        <div class="exchange-rate">
+          <p class="rate-label">Exchange Rate</p>
+          <p class="rate-value">1 FQ = 1 KSH</p>
+        </div>
+      </div>
+      <div class="token-packages">
+        <div *ngFor="let pkg of tokenPackages" class="token-package" [class.featured-package]="pkg.featured">
+          <div *ngIf="pkg.featured" class="best-value-badge">Best Value</div>
+          <div class="package-tokens">{{ pkg.tokens }} FQ</div>
+          <div class="package-price">{{ getPackagePrice(pkg.tokens) | number:'1.0-0' }} KSH</div>
+          <button class="btn btn-primary btn-block" (click)="buyTokens(pkg.tokens)">Buy Now</button>
+          <p class="package-bonus">+ {{ getPackageBonus(pkg.tokens) }} FQ Bonus</p>
+        </div>
+      </div>
+      <div class="custom-token-purchase">
+        <h3>Custom Amount</h3>
+        <div class="token-input-group">
+          <div class="input-wrapper">
+            <input 
+              type="number" 
+              placeholder="Enter amount in KSH" 
+              class="token-input" 
+              [(ngModel)]="customAmount"
+              (input)="calculateTokens()"
+              min="10"
+              max="1000000"
+            />
+            <span class="currency-label">KSH</span>
+          </div>
+          <div class="conversion-display" *ngIf="customAmount && customAmount > 0">
+            <div class="conversion-row">
+              <span class="conversion-label">You will receive:</span>
+              <span class="conversion-value">{{ customTokens | number:'1.2-2' }} FQ</span>
+            </div>
+            <div class="conversion-breakdown">
+              <p>[{{ (customAmount / TOKEN_PRICE) | number:'1.2-2' }} FQ base + {{ ((customAmount / TOKEN_PRICE) * BONUS_PERCENTAGE) | number:'1.2-2' }} FQ bonus (10%)]</p>
+            </div>
+            <button class="btn btn-primary btn-block" (click)="buyTokens(customTokens)">
+              Buy {{ customTokens | number:'1.2-2' }} FQ Tokens for {{ customAmount | number:'1.0-0' }} KSH
+            </button>
+          </div>
+          <div class="no-conversion-display" *ngIf="!customAmount || customAmount <= 0">
+            <p class="placeholder-text">Enter an amount to see token conversion</p>
+          </div>
+        </div>
+      </div>
+      <div class="payment-methods">
+        <h3>Accepted Payment Methods</h3>
+        <div class="methods-grid">
+          <div class="method available">
+            <span class="method-icon">🏦</span>
+            <p>M-Pesa</p>
+            <span class="method-status">Available</span>
+          </div>
+          <div class="method coming-soon">
+            <span class="method-icon">💳</span>
+            <p>Credit Card</p>
+            <span class="method-status">Coming Soon</span>
+          </div>
+          <div class="method coming-soon">
+            <span class="method-icon">🏧</span>
+            <p>Bank Transfer</p>
+            <span class="method-status">Coming Soon</span>
+          </div>
+          <div class="method coming-soon">
+            <span class="method-icon">⛓️</span>
+            <p>Crypto</p>
+            <span class="method-status">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2>What Farmers Say About FarmIQ</h2>
+      <p>Join thousands of successful farmers across East Africa</p>
+    </div>
+    <div class="testimonials-grid">
+      <div *ngFor="let testimonial of testimonials" class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="avatar">{{ testimonial.avatar }}</div>
+          <div class="testimonial-info">
+            <h4>{{ testimonial.name }}</h4>
+            <p>{{ testimonial.role }}</p>
+          </div>
+        </div>
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="testimonial-text">{{ testimonial.message }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Ready to Transform Your Farm?</h2>
+      <p>Join FarmIQ today and start making data-driven farming decisions</p>
+      <a routerLink="/signup" class="btn btn-primary btn-lg">Create Free Account</a>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Detail Modal -->
+<div class="feature-modal-backdrop" *ngIf="showFeatureModal" (click)="closeFeatureModal()"></div>
+<div class="feature-modal" *ngIf="showFeatureModal && selectedFeature" role="dialog" aria-modal="true">
+  <button class="modal-close" (click)="closeFeatureModal()" aria-label="Close modal">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="modal-content">
+    <div class="modal-icon" [style.background-color]="selectedFeature.color">
+      {{ selectedFeature.icon }}
+    </div>
+    <h2>{{ selectedFeature.title }}</h2>
+    <p class="modal-description">{{ selectedFeature.detailedDescription }}</p>
+    <button class="btn btn-primary btn-block" (click)="closeFeatureModal(); buyTokens(100)">Get Started</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>FarmIQ</h4>
+        <p>Empowering farmers with intelligence and blockchain technology</p>
+      </div>
+      <div class="footer-section">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features" (click)="scrollToSection('features'); $event.preventDefault()">Features</a></li>
+          <li><a href="#pricing" (click)="scrollToSection('pricing'); $event.preventDefault()">Pricing</a></li>
+          <li><a href="#" (click)="$event.preventDefault()">Security</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#" (click)="$event.preventDefault()" title="About page coming soon">About</a></li>
+          <li><a href="#" (click)="$event.preventDefault()" title="Blog page coming soon">Blog</a></li>
+          <li><a href="#" (click)="$event.preventDefault()" title="Contact page coming soon">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#" (click)="$event.preventDefault()" title="Privacy policy coming soon">Privacy</a></li>
+          <li><a href="#" (click)="$event.preventDefault()" title="Terms of service coming soon">Terms</a></li>
+          <li><a href="#" (click)="$event.preventDefault()" title="Cookie policy coming soon">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FarmIQ. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#" (click)="$event.preventDefault()" title="FarmIQ on Twitter" aria-label="Follow us on Twitter">Twitter</a>
+        <a href="#" (click)="$event.preventDefault()" title="FarmIQ on LinkedIn" aria-label="Follow us on LinkedIn">LinkedIn</a>
+        <a href="#" (click)="$event.preventDefault()" title="FarmIQ on Facebook" aria-label="Follow us on Facebook">Facebook</a>
+      </div>
+    </div>
+  </div>
+</footer>

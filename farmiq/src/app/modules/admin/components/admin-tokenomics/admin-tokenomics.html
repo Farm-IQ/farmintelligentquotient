@@ -1,0 +1,76 @@
+<div class="admin-tokenomics">
+  <header class="tokenomics-header">
+    <h1>Tokenomics Management</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <!-- Token Supply Cards -->
+  <div class="supply-cards">
+    <div class="supply-card">
+      <h3>Total Supply</h3>
+      <p class="supply-value">{{ (tokenomics.totalSupply / 1000000000) | number:'1.1-1' }}B</p>
+      <p class="supply-label">{{ tokenomics.totalSupply | number }}</p>
+    </div>
+    <div class="supply-card">
+      <h3>Circulating Supply</h3>
+      <p class="supply-value">{{ (tokenomics.circulatingSupply / 1000000) | number:'1.1-1' }}M</p>
+      <p class="supply-label">{{ getCirculationPercentage() | number:'1.0-0' }}% of total</p>
+    </div>
+    <div class="supply-card">
+      <h3>Token Price</h3>
+      <p class="supply-value">{{ formatCurrency(tokenomics.tokenPrice) }}</p>
+      <p class="supply-label">Market price</p>
+    </div>
+    <div class="supply-card">
+      <h3>Market Cap</h3>
+      <p class="supply-value">{{ formatCurrency(tokenomics.marketCap) }}</p>
+      <p class="supply-label">Total valuation</p>
+    </div>
+  </div>
+
+  <!-- Staking Information -->
+  <div class="staking-section">
+    <h2>Staking Information</h2>
+    <div class="staking-cards">
+      <div class="staking-card">
+        <h3>Total Staked</h3>
+        <p class="staking-value">{{ (tokenomics.totalStaked / 1000000) | number:'1.1-1' }}M</p>
+        <p class="staking-percentage">{{ getStakingPercentage() | number:'1.0-0' }}% staked</p>
+      </div>
+      <div class="staking-card">
+        <h3>APY</h3>
+        <p class="staking-value">{{ (tokenomics.apy * 100) | number:'1.1-1' }}%</p>
+        <p class="staking-label">Annual percentage yield</p>
+      </div>
+      <div class="staking-card">
+        <h3>Staking Rewards</h3>
+        <p class="staking-value">{{ formatCurrency(tokenomics.stakingRewards) }}</p>
+        <p class="staking-label">Total distributed</p>
+      </div>
+      <div class="staking-card">
+        <h3>Token Holders</h3>
+        <p class="staking-value">{{ tokenomics.holders | number }}</p>
+        <p class="staking-label">Active holders</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token Distribution -->
+  <div class="distribution-section">
+    <h2>Token Distribution</h2>
+    <div class="distribution-list">
+      <div *ngFor="let dist of tokenDistribution" class="distribution-item">
+        <p class="dist-category">{{ dist.category }}</p>
+        <div class="dist-bar">
+          <div class="bar-fill" [style.width.%]="dist.percentage"></div>
+        </div>
+        <p class="dist-percentage">{{ dist.percentage | number:'1.0-0' }}%</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,466 @@
+// Web3 Wallet Styles - Admin Role
+$primary-color: #10b981;
+$primary-dark: #059669;
+$primary-light: #d1fae5;
+$warning-color: #f59e0b;
+$success-color: #22c55e;
+$danger-color: #ef4444;
+$info-color: #3b82f6;
+$light-bg: #f9fafb;
+$border-color: #e5e7eb;
+$text-primary: #111827;
+$text-secondary: #6b7280;
+$text-light: #9ca3af;
+
+.wallet-dashboard {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  @media (min-width: 600px) {
+    padding: 2rem;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+    
+    h1 {
+      font-size: 2rem;
+      color: $text-primary;
+      margin: 0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .error-banner,
+  .compliance-banner {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .compliance-banner {
+    background-color: $warning-color;
+    background-color: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid $warning_color;
+    color: #92400e;
+
+    .compliance-content {
+      flex: 1;
+
+      h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0.25rem 0;
+        font-size: 0.875rem;
+      }
+    }
+
+    .btn-close-banner {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #92400e;
+      padding: 0;
+      line-height: 1;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .error-banner {
+    background-color: #fee;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid $danger-color;
+    color: #7f1d1d;
+
+    p {
+      margin: 0;
+    }
+
+    .btn-close-banner {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #7f1d1d;
+      padding: 0;
+      line-height: 1;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  // Web3 Connect Section
+  .web3-connect-section {
+    background: $light_bg;
+    border: 1px solid $border_color;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+
+    h2 {
+      font-size: 1.5rem;
+      color: $text_primary;
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .description {
+      color: $text_secondary;
+      margin-bottom: 2rem;
+    }
+
+    .wallet-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+
+      @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .btn-wallet {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+
+      .wallet-icon {
+        font-size: 2rem;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .wallet-info {
+      text-align: left;
+      background: white;
+      border: 1px solid $border_color;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.875rem;
+
+      p {
+        margin: 0.5rem 0;
+        color: $text_secondary;
+      }
+
+      .disclaimer {
+        color: $text_light;
+        font-style: italic;
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  // Web3 Connected Section
+  .web3-connected-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .wallet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    border: 1px solid $border_color;
+    border-radius: 0.75rem;
+    padding: 1rem;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .wallet-info-card {
+      flex: 1;
+
+      .label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: $text_light;
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .address {
+        font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: $text_primary;
+        margin-bottom: 0.25rem;
+      }
+
+      .provider {
+        font-size: 0.875rem;
+        color: $text_secondary;
+        margin: 0;
+      }
+    }
+  }
+
+  // Balance Card
+  .balance-card {
+    background: white;
+    border: 2px solid $primary_light;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+
+    .label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: $text_light;
+      margin-bottom: 0.5rem;
+    }
+
+    .amount {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $primary_color;
+      margin-bottom: 0.5rem;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+    }
+
+    .token-info {
+      font-size: 0.875rem;
+      color: $text_secondary;
+    }
+  }
+
+  // Transfer Section
+  .transfer-section {
+    h3 {
+      font-size: 1.25rem;
+      margin: 1rem 0;
+      color: $text_primary;
+    }
+
+    .transfer-form {
+      background: white;
+      border: 1px solid $border_color;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+
+      label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: $text_primary;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid $border_color;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: $primary_color;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        &:disabled {
+          background-color: #f3f4f6;
+          cursor: not-allowed;
+        }
+      }
+
+      .error-text {
+        display: block;
+        color: $danger_color;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        font-weight: 500;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+
+      button {
+        flex: 1;
+      }
+    }
+  }
+
+  // Transactions Section
+  .transactions-section {
+    h3 {
+      font-size: 1.25rem;
+      margin: 1.5rem 0 1rem 0;
+      color: $text_primary;
+    }
+
+    .transaction-item {
+      background: white;
+      border: 1px solid $border_color;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.05);
+        border-color: $primary_color;
+      }
+
+      .tx-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+      }
+
+      .description {
+        font-weight: 500;
+        color: $text_primary;
+      }
+
+      .tx-hash {
+        font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+        font-size: 0.75rem;
+        color: $text_light;
+      }
+
+      .amount {
+        font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+        font-weight: 600;
+        font-size: 1rem;
+
+        &.sent {
+          color: $danger_color;
+        }
+
+        &.received {
+          color: $success_color;
+        }
+      }
+    }
+  }
+
+  .no-transactions {
+    background: $light_bg;
+    border: 1px dashed $border_color;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    color: $text_secondary;
+  }
+
+  // Buttons
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.btn-primary {
+      background-color: $primary_color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: $primary_dark;
+        transform: translateY(-2px);
+      }
+    }
+
+    &.btn-secondary {
+      background-color: $light_bg;
+      color: $text_secondary;
+      border: 1px solid $border_color;
+
+      &:hover:not(:disabled) {
+        background-color: white;
+        border-color: $text_secondary;
+      }
+    }
+
+    &.btn-danger {
+      background-color: $danger_color;
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+
+      &:hover:not(:disabled) {
+        background-color: #dc2626;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.web3-connect-section,
+.web3-connected-section,
+.transfer-form {
+  animation: fadeIn 0.3s ease;
+}

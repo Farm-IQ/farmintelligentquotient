@@ -1,0 +1,26 @@
+# MINIMAL CORE - ESSENTIAL ONLY (STRICT PINS)
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pydantic==2.12.5
+pydantic-settings==2.1.0
+
+# DATABASE - SUPABASE REMOVED, USE PSYCOPG2 DIRECTLY
+sqlalchemy==1.4.48
+psycopg2-binary==2.9.10
+alembic==1.12.1
+
+# HTTP ONLY
+requests==2.31.0
+httpx==0.25.2
+
+# AUTH
+PyJWT==2.8.0
+python-jose==3.3.0
+passlib==1.7.4
+cryptography==41.0.7
+
+# LOGGING
+python-dotenv==1.0.0
+structlog==23.2.0
+python-json-logger==2.0.7

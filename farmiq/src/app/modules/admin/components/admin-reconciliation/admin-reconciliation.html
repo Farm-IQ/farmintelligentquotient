@@ -1,0 +1,81 @@
+<div class="admin-reconciliation">
+  <header class="reconciliation-header">
+    <h1>Reconciliation Management</h1>
+    <button (click)="runReconciliation()" [disabled]="reconciling" class="btn-primary">{{ reconciling ? 'Reconciling...' : 'Run Reconciliation' }}</button>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Reconciliation Status Cards -->
+  <div class="status-cards">
+    <div class="status-card">
+      <h3>Current Status</h3>
+      <p class="status-value" [style.color]="getStatusColor(reconciliationStatus.status)">{{ reconciliationStatus.status | uppercase }}</p>
+      <p class="status-label">Latest state</p>
+    </div>
+    <div class="status-card">
+      <h3>Total Discrepancies</h3>
+      <p class="status-value">{{ reconciliationStatus.discrepancies }}</p>
+      <p class="status-label">Found in audit</p>
+    </div>
+    <div class="status-card">
+      <h3>Resolved</h3>
+      <p class="status-value" style="color: #4CAF50">{{ reconciliationStatus.resolvedDiscrepancies }}</p>
+      <p class="status-label">Corrected items</p>
+    </div>
+    <div class="status-card">
+      <h3>Accuracy</h3>
+      <p class="status-value">{{ (getAccuracyPercentage()) | number:'1.1-1' }}%</p>
+      <p class="status-label">Data accuracy</p>
+    </div>
+  </div>
+
+  <!-- Accuracy Progress -->
+  <div class="accuracy-section">
+    <h2>System Accuracy</h2>
+    <div class="accuracy-bar">
+      <div class="accuracy-fill" [style.width.%]="getAccuracyPercentage()"></div>
+    </div>
+    <p class="accuracy-label">{{ getAccuracyPercentage() | number:'1.1-1' }}% accurate</p>
+  </div>
+
+  <!-- Discrepancies Summary -->
+  <div class="discrepancies-section">
+    <h2>Discrepancies Summary</h2>
+    <div class="discrepancies-grid">
+      <div class="discrepancy-item">
+        <p class="item-label">Pending Resolution</p>
+        <p class="item-value">{{ reconciliationStatus.pendingResolution }}</p>
+      </div>
+      <div class="discrepancy-item">
+        <p class="item-label">Resolution Rate</p>
+        <p class="item-value">{{ ((reconciliationStatus.resolvedDiscrepancies / reconciliationStatus.discrepancies) * 100) | number:'1.0-0' }}%</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reconciliation History -->
+  <div class="history-section">
+    <h2>Reconciliation History</h2>
+    <div class="history-list">
+      <div *ngFor="let record of reconciliationHistory" class="history-item">
+        <div class="item-header">
+          <p class="item-date">{{ record.date | date }}</p>
+          <span class="item-status" [style.color]="getStatusColor(record.status)">{{ record.status }}</span>
+        </div>
+        <p class="item-details">Discrepancies: {{ record.discrepancies }} | Resolved: {{ record.resolved }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Run -->
+  <div class="next-run-section">
+    <p class="next-run-label">Next Scheduled Run</p>
+    <p class="next-run-time">{{ reconciliationStatus.nextScheduledRun | date:'medium' }}</p>
+  </div>
+</div>

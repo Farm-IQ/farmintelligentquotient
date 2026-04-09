@@ -1,0 +1,83 @@
+<div class="cooperative-finance">
+  <header class="finance-header">
+    <h1>Financial Overview</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <div *ngIf="!loading && financialOverview" class="finance-content">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card revenue">
+        <div class="card-icon">📈</div>
+        <div class="card-info">
+          <p class="card-label">Total Revenue</p>
+          <p class="card-value">{{ formatCurrency(getTotalRevenue()) }}</p>
+        </div>
+      </div>
+      <div class="summary-card expenses">
+        <div class="card-icon">📉</div>
+        <div class="card-info">
+          <p class="card-label">Total Expenses</p>
+          <p class="card-value">{{ formatCurrency(getTotalExpenses()) }}</p>
+        </div>
+      </div>
+      <div class="summary-card profit">
+        <div class="card-icon">💰</div>
+        <div class="card-info">
+          <p class="card-label">Net Profit</p>
+          <p class="card-value">{{ formatCurrency(getNetProfit()) }}</p>
+        </div>
+      </div>
+      <div class="summary-card margin">
+        <div class="card-icon">📊</div>
+        <div class="card-info">
+          <p class="card-label">Profit Margin</p>
+          <p class="card-value">{{ getProfitMargin() | number:'1.1-1' }}%</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Period Selection -->
+    <div class="period-selector">
+      <button *ngFor="let period of ['month', 'quarter', 'year']" 
+              (click)="selectedPeriod = period"
+              [class.active]="selectedPeriod === period"
+              class="period-btn">
+        {{ period | titlecase }}
+      </button>
+    </div>
+
+    <!-- Revenue Breakdown -->
+    <div class="chart-section">
+      <h3>Revenue by Source</h3>
+      <div class="revenue-list">
+        <div *ngFor="let item of getRevenueData()" class="revenue-item">
+          <span class="revenue-name">{{ item.name }}</span>
+          <div class="revenue-bar">
+            <div class="bar-fill" [style.width.%]="(item.amount / getTotalRevenue()) * 100"></div>
+          </div>
+          <span class="revenue-amount">{{ formatCurrency(item.amount) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expense Categories -->
+    <div class="expense-section">
+      <h3>Top Expense Categories</h3>
+      <div class="expense-list">
+        <div *ngFor="let expense of getTopExpenseCategories()" class="expense-item">
+          <div class="expense-header">
+            <span class="expense-name">{{ expense.category }}</span>
+            <span class="expense-percent">{{ ((expense.amount / getTotalExpenses()) * 100) | number:'1.0-0' }}%</span>
+          </div>
+          <p class="expense-amount">{{ formatCurrency(expense.amount) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

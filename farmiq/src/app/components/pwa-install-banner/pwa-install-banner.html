@@ -1,0 +1,15 @@
+<div class="pwa-install-banner" *ngIf="showBanner()">
+  <div class="banner-content">
+    <div class="banner-icon">
+      <img ngSrc="/icons/android-chrome-192x192.png" alt="FarmIQ Icon" class="banner-app-icon" width="37" height="45" priority (load)="onImageLoad($event)" (error)="onImageError($event)" />
+    </div>
+    <div class="banner-text">
+      <h3>Install FarmIQ</h3>
+      <p>Install our app for quick access to your farm intelligence on the go</p>
+    </div>
+    <div class="banner-actions">
+      <button class="btn-install" (click)="onInstallClick()">Install</button>
+      <button class="btn-dismiss" (click)="onDismiss()">Dismiss</button>
+    </div>
+  </div>
+</div>

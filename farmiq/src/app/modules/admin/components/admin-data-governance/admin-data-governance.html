@@ -1,0 +1,62 @@
+<div class="admin-data-governance">
+  <header class="governance-header">
+    <h1>Data Governance & Compliance</h1>
+    <button (click)="runComplianceAudit()" [disabled]="loading" class="btn-primary">Run Compliance Audit</button>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Data Governance Status -->
+  <div class="governance-cards">
+    <div class="governance-card">
+      <h3>Data Integrity</h3>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getIntegrityPercentage()"></div>
+      </div>
+      <p class="status">{{ getIntegrityPercentage() | number:'1.0-0' }}%</p>
+    </div>
+    <div class="governance-card">
+      <h3>Compliance Status</h3>
+      <p class="status-value" [style.color]="getStatusColor(dataGovernance.complianceStatus)">{{ dataGovernance.complianceStatus }}</p>
+    </div>
+    <div class="governance-card">
+      <h3>Encryption Status</h3>
+      <p class="status-value" [style.color]="getStatusColor(dataGovernance.encryptionStatus)">{{ dataGovernance.encryptionStatus }}</p>
+    </div>
+    <div class="governance-card">
+      <h3>Backup Status</h3>
+      <p class="status-value" [style.color]="getStatusColor(dataGovernance.backupStatus)">{{ dataGovernance.backupStatus }}</p>
+    </div>
+  </div>
+
+  <!-- Compliance Metrics -->
+  <div class="compliance-section">
+    <h2>Compliance Metrics</h2>
+    <div class="metrics-list">
+      <div class="metric-row" *ngFor="let metric of complianceMetrics">
+        <span class="metric-name">{{ metric.name }}</span>
+        <div class="metric-bar">
+          <div class="bar-fill" [style.width.%]="metric.score"></div>
+        </div>
+        <span class="metric-score">{{ metric.score | number:'1.0-0' }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit History -->
+  <div class="audit-section">
+    <h2>Recent Audits</h2>
+    <div class="audit-list">
+      <div *ngFor="let audit of auditHistory" class="audit-item">
+        <p class="audit-date">{{ audit.date | date }}</p>
+        <p class="audit-status" [style.color]="getStatusColor(audit.status)">{{ audit.status }}</p>
+        <p class="audit-findings">{{ audit.findingsCount }} findings</p>
+      </div>
+    </div>
+  </div>
+</div>

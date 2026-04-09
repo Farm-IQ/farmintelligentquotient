@@ -1,0 +1,67 @@
+<div class="lender-insights">
+  <header class="insights-header">
+    <h1>Market & Performance Insights</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <div *ngIf="!loading && marketInsights" class="insights-content">
+    <!-- Sector Trends -->
+    <div class="insights-section">
+      <h3>Sector Trends</h3>
+      <div class="trends-grid">
+        <div *ngFor="let trend of getSectorTrends()" class="trend-card">
+          <h4>{{ trend.sector }}</h4>
+          <p class="trend-value" [ngClass]="getTrendClass(trend.trend)">
+            <span class="trend-icon">{{ getTrendIcon(trend.trend) }}</span>
+            {{ trend.trend | number:'1.1-1' }}%
+          </p>
+          <p class="trend-description">{{ trend.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crop Outlook -->
+    <div class="insights-section">
+      <h3>Crop Outlook</h3>
+      <div class="outlook-list">
+        <div *ngFor="let crop of getCropOutlook()" class="outlook-item">
+          <div class="crop-header">
+            <h4>{{ crop.name }}</h4>
+            <span class="outlook-badge" [ngClass]="crop.outlook.toLowerCase()">{{ crop.outlook }}</span>
+          </div>
+          <p class="crop-price">Price: {{ crop.expectedPrice | currency }}</p>
+          <p class="crop-change" [ngClass]="getTrendClass(crop.priceChange)">
+            {{ getTrendIcon(crop.priceChange) }} {{ crop.priceChange | number:'1.1-1' }}% change
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="insights-section">
+      <h3>Lending Recommendations</h3>
+      <ul class="recommendations-list">
+        <li *ngFor="let rec of getRecommendations()" class="recommendation-item">
+          <span class="rec-icon">💡</span>
+          <span>{{ rec }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Risk Factors -->
+    <div class="insights-section warning">
+      <h3>Risk Factors to Monitor</h3>
+      <ul class="risk-list">
+        <li *ngFor="let risk of getRiskFactors()" class="risk-item">
+          <span class="risk-icon">⚠️</span>
+          <span>{{ risk }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

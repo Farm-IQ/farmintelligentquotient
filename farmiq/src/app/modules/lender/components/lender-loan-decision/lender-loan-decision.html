@@ -1,0 +1,95 @@
+<div class="lender-loan-decision">
+  <header class="decision-header">
+    <h1>Loan Decision</h1>
+    <p class="subtitle">{{ applications.length }} pending applications</p>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <div *ngIf="!loading && currentApplication" class="decision-content">
+    <!-- Application Details -->
+    <div class="app-details-card">
+      <h3>Application Details</h3>
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Farmer Name</label>
+          <p>{{ currentApplication.farmerName }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Farm Location</label>
+          <p>{{ currentApplication.farmLocation }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Farm Size</label>
+          <p>{{ currentApplication.farmSize }} acres</p>
+        </div>
+        <div class="detail-item">
+          <label>FIQ Score</label>
+          <p>{{ currentApplication.fiqScore }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Requested Amount</label>
+          <p>{{ currentApplication.requestedAmount | currency }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Loan Purpose</label>
+          <p>{{ currentApplication.purpose }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decision Form -->
+    <div class="decision-form-card">
+      <h3>Make Decision</h3>
+      <form (ngSubmit)="submitDecision()">
+        <div class="form-group approval">
+          <label>
+            <input [(ngModel)]="decisionForm.approved" name="approved" type="checkbox">
+            <span class="checkbox-label">Approve Loan</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Loan Amount</label>
+          <input [(ngModel)]="decisionForm.loanAmount" name="loanAmount" type="number" step="1000">
+        </div>
+
+        <div class="form-group">
+          <label>Interest Rate (%)</label>
+          <input [(ngModel)]="decisionForm.interestRate" name="interestRate" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>Tenure (months)</label>
+          <input [(ngModel)]="decisionForm.tenure" name="tenure" type="number">
+        </div>
+
+        <div class="monthly-payment" *ngIf="decisionForm.approved">
+          <p class="payment-label">Monthly Payment</p>
+          <p class="payment-amount">{{ calculateMonthlyPayment() | currency }}</p>
+        </div>
+
+        <div class="form-group">
+          <label>Conditions</label>
+          <textarea [(ngModel)]="decisionForm.conditions" name="conditions" rows="4" placeholder="Any special conditions or remarks..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="deciding" class="btn-primary">
+            {{ deciding ? 'Submitting...' : 'Submit Decision' }}
+          </button>
+          <button type="button" (click)="skipApplication()" class="btn-secondary">Skip Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !currentApplication" class="no-applications">
+    <p>No pending applications</p>
+  </div>
+</div>

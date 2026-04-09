@@ -1,0 +1,18 @@
+<footer class="worker-footer-nav">
+  <ul class="footer-content">
+    <!-- Navigation Links -->
+    <li *ngFor="let link of footerLinks" class="footer-link" [class.active]="isActive(link.path)">
+      <button (click)="navigateTo(link.path)" class="nav-link" [title]="link.label">
+        <div class="nav-icon-wrapper">
+          <ion-icon [name]="link.ionIcon"></ion-icon>
+        </div>
+        <span class="nav-text">{{ link.label }}</span>
+      </button>
+    </li>
+  </ul>
+
+  <!-- Footer Info -->
+  <div class="footer-info">
+    <p>&copy; 2024 FarmIQ. All rights reserved.</p>
+  </div>
+</footer>

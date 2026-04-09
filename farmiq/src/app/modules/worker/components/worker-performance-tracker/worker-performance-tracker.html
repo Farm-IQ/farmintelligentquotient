@@ -1,0 +1,35 @@
+<div class="performance-tracker">
+  <h2>Performance Tracking</h2>
+
+  <div class="performance-stats">
+    <div class="card stat-card">
+      <span class="label">Average Score</span>
+      <span class="value">{{ averageScore }}/100</span>
+    </div>
+    <div class="card stat-card">
+      <span class="label">Total Reviews</span>
+      <span class="value">{{ performanceHistory.length }}</span>
+    </div>
+    <div class="card stat-card">
+      <span class="label">Latest Review</span>
+      <span class="value">{{ (performanceHistory[0]?.review_date | date: 'MMM dd') || '-' }}</span>
+    </div>
+  </div>
+
+  <!-- Performance History -->
+  <div class="card history-section">
+    <h3>Performance Reviews</h3>
+    <div *ngIf="performanceHistory.length === 0" class="empty-state">
+      No performance reviews found
+    </div>
+    <div *ngFor="let review of performanceHistory" class="review-item">
+      <div class="review-header">
+        <span class="date">{{ review.review_date | date: 'MMM dd, yyyy' }}</span>
+        <span class="score-badge" [class]="'level-' + getScoreLevel(review.performance_score)">
+          {{ review.performance_score }} / 100
+        </span>
+      </div>
+      <p *ngIf="review.comments" class="comments">{{ review.comments }}</p>
+    </div>
+  </div>
+</div>

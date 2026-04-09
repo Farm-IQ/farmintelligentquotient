@@ -1,0 +1,935 @@
+﻿// ============================================================================
+// FARMER DASHBOARD STYLES
+// Comprehensive styling for home dashboard with metrics, analytics, and actions
+// ============================================================================
+
+@use 'sass:color';
+
+$primary-color: #10b981;
+$primary-dark: #059669;
+$primary-light: #d1fae5;
+$secondary-color: #3b82f6;
+$success-color: #22c55e;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$border-color: #e5e7eb;
+$bg-light: #f9fafb;
+
+.farmer-dashboard {
+  padding: 16px;
+
+  @media (min-width: 768px) {
+    padding: 24px;
+  }
+}
+
+// ============================================================================
+// LOADING & ERROR STATES
+// ============================================================================
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: 14px;
+  }
+}
+
+.error-banner {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: #fef2f2;
+  border-left: 4px solid $danger-color;
+  border-radius: 8px;
+  margin-bottom: 24px;
+
+  .error-icon {
+    color: $danger-color;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .error-content {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    p {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      color: $text-secondary;
+    }
+  }
+
+  .btn-retry {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: $danger-color;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:hover {
+      background: color.adjust($danger-color, $lightness: -10%);
+    }
+
+    ion-icon {
+      font-size: 14px;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================================================
+// WELCOME SECTION
+// ============================================================================
+
+.welcome-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+  border-radius: 12px;
+  color: white;
+
+  .hero-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+
+    .hero-text {
+      flex: 1;
+
+      h1 {
+        margin: 0 0 4px 0;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.3;
+
+        @media (max-width: 480px) {
+          font-size: 18px;
+        }
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.9;
+      }
+    }
+
+    .btn-refresh {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      ion-icon {
+        font-size: 20px;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+// ============================================================================
+// METRICS SECTION
+// ============================================================================
+
+.metrics-section {
+  margin-bottom: 32px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metric-card {
+  padding: 16px;
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+
+  .metric-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .metric-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 18px;
+
+      &.farm-icon {
+        background: #fef3c7;
+        color: #f59e0b;
+      }
+
+      &.crop-icon {
+        background: #dcfce7;
+        color: #22c55e;
+      }
+
+      &.soil-icon {
+        background: #fed7aa;
+        color: #ea580c;
+      }
+
+      &.water-icon {
+        background: #cffafe;
+        color: #0891b2;
+      }
+
+      &.yield-icon {
+        background: #fce7f3;
+        color: #ec4899;
+      }
+
+      &.harvest-icon {
+        background: #f3e8ff;
+        color: #a855f7;
+      }
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: $text-secondary;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 4px;
+  }
+
+  .metric-unit {
+    font-size: 12px;
+    color: $text-secondary;
+    margin-bottom: 12px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: $border-color;
+    border-radius: 3px;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, $primary-color, $success-color);
+      transition: width 0.3s ease;
+    }
+  }
+}
+
+// ============================================================================
+// ANALYTICS SECTION
+// ============================================================================
+
+.analytics-section {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  .section-badge {
+    padding: 4px 8px;
+    background: $primary-light;
+    color: $primary-dark;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analytics-card {
+  padding: 20px;
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-primary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  // Yield Performance Card
+  .yield-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .yield-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 12px;
+      border-bottom: 1px solid $border-color;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .yield-label {
+        font-size: 12px;
+        color: $text-secondary;
+      }
+
+      .yield-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: $text-primary;
+      }
+
+      .yield-unit {
+        font-size: 11px;
+        color: $text-secondary;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .yield-comparison {
+    display: inline-block;
+
+    .growth {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+
+      ion-icon {
+        font-size: 14px;
+      }
+
+      &.positive {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+
+      &.negative {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+    }
+  }
+
+  // Weather Impact Card
+  .weather-impact {
+    .impact-meter {
+      height: 8px;
+      background: $border-color;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+
+      .impact-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #fbbf24, $success-color);
+        transition: width 0.3s ease;
+      }
+    }
+
+    .impact-text {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+
+      .impact-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: $text-primary;
+      }
+
+      .impact-label {
+        font-size: 12px;
+        color: $text-secondary;
+      }
+    }
+  }
+
+  // Soil Health Score Card
+  .health-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      position: relative;
+
+      svg {
+        transform: rotate(-90deg);
+
+        .score-background {
+          fill: none;
+          stroke: $border-color;
+          stroke-width: 4;
+        }
+
+        .score-progress {
+          fill: none;
+          stroke: url(#scoreGradient);
+          stroke-width: 4;
+          stroke-linecap: round;
+          transition: stroke-dashoffset 0.5s ease;
+          stroke-dasharray: 283;
+        }
+      }
+
+      .score-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        .score-number {
+          display: block;
+          font-size: 24px;
+          font-weight: 700;
+          color: $primary-color;
+        }
+      }
+    }
+  }
+
+  // Water Usage Card
+  .water-usage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    .usage-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: $text-primary;
+    }
+
+    .usage-unit {
+      font-size: 12px;
+      color: $text-secondary;
+      text-transform: uppercase;
+    }
+
+    .usage-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+
+      ion-icon {
+        font-size: 14px;
+      }
+
+      &.status-normal {
+        background: #dcfce7;
+        color: $success-color;
+      }
+
+      &.status-low {
+        background: #fef3c7;
+        color: $warning-color;
+      }
+
+      &.status-high {
+        background: #fee2e2;
+        color: $danger-color;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// RECOMMENDATIONS SECTION
+// ============================================================================
+
+.recommendations-section {
+  margin-bottom: 32px;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recommendation-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border-left: 4px solid $border-color;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.rec-priority-high {
+    border-left-color: $danger-color;
+    background: #fff5f5;
+  }
+
+  &.rec-priority-medium {
+    border-left-color: $warning-color;
+    background: #fffbf0;
+  }
+
+  &.rec-priority-low {
+    border-left-color: $success-color;
+    background: #f0fdf4;
+  }
+
+  .rec-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 20px;
+    flex-shrink: 0;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+
+  .rec-content {
+    flex: 1;
+
+    h4 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: $text-secondary;
+      line-height: 1.4;
+    }
+  }
+
+  .rec-action {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
+
+    .btn-link {
+      padding: 0;
+      background: none;
+      border: none;
+      color: $primary-color;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.3s;
+
+      &:hover {
+        color: $primary-dark;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// QUICK ACTIONS SECTION
+// ============================================================================
+
+.quick-actions-section {
+  margin-bottom: 32px;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: white;
+  border: 2px solid $border-color;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: $text-secondary;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .action-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 24px;
+    transition: all 0.3s ease;
+
+    &.analytics-icon {
+      background: #dbeafe;
+      color: $secondary-color;
+    }
+
+    &.credit-icon {
+      background: #ddd6fe;
+      color: #7c3aed;
+    }
+
+    &.trading-icon {
+      background: #fce7f3;
+      color: #ec4899;
+    }
+
+    &.wallet-icon {
+      background: #dcfce7;
+      color: $success-color;
+    }
+  }
+
+  .action-text {
+    line-height: 1.2;
+  }
+
+  &:hover .action-icon {
+    transform: scale(1.1);
+  }
+}
+
+// ============================================================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================================================
+
+@media (max-width: 640px) {
+  .farmer-dashboard {
+    padding: 12px;
+  }
+
+  .welcome-section {
+    padding: 16px;
+
+    .hero-content {
+      flex-direction: column;
+      gap: 12px;
+
+      .hero-text h1 {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .section-header {
+    h2 {
+      font-size: 16px;
+    }
+  }
+}
+
+// Animation for refresh button rotation
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-refresh:active {
+  animation: rotate 0.6s linear;
+}
+// ============================================================================
+// MAP SECTION STYLES
+// ============================================================================
+
+.map-section {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  overflow: hidden;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid $border-color;
+    background: $bg-light;
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: $text-primary;
+    }
+
+    .btn-toggle-map {
+      background: none;
+      border: none;
+      color: $text-secondary;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
+      }
+    }
+  }
+
+  .map-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+
+    @media (min-width: 768px) {
+      height: 500px;
+    }
+
+    @media (min-width: 1024px) {
+      height: 600px;
+    }
+
+    // MapLibre GL styles
+    :deep(.maplibregl-canvas) {
+      border-radius: 0;
+    }
+
+    :deep(.maplibregl-ctrl) {
+      margin: 10px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    :deep(.maplibregl-ctrl button) {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: rgba($primary-color, 0.1);
+      }
+    }
+
+    :deep(.maplibregl-popup-content) {
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      max-width: 200px;
+    }
+  }
+
+  .map-loading {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid $border-color;
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    p {
+      color: $text-secondary;
+      font-size: 14px;
+    }
+  }
+
+  .map-info {
+    padding: 12px 20px;
+    background: $bg-light;
+    border-top: 1px solid $border-color;
+    text-align: center;
+
+    .text-muted {
+      color: $text-secondary;
+      font-size: 12px;
+
+      span {
+        margin-left: 6px;
+        font-weight: 600;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================================================
+
+@media (max-width: 640px) {
+  .map-container {
+    height: 300px !important;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

@@ -1,0 +1,110 @@
+<div class="lender-risk-dashboard">
+  <header class="dashboard-header">
+    <div class="header-top">
+      <h1>Risk Dashboard</h1>
+      <div class="header-actions">
+        <button class="btn-chat" (click)="goToChatbot()" title="FarmGrow Chat Assistant">
+          <span class="chat-icon">💬</span>
+          <span class="btn-text">FarmGrow</span>
+        </button>
+        <button class="btn-signout" (click)="signOut()" title="Sign out">
+          <span class="signout-icon">🚪</span>
+          <span class="btn-text">Sign Out</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading risk data...</p>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <div *ngIf="!loading && portfolioMetrics" class="dashboard-content">
+    <!-- Risk Summary Cards -->
+    <div class="risk-summary">
+      <div class="risk-card high-risk">
+        <h3>High Risk</h3>
+        <p class="risk-count">{{ getHighRiskCount() }}</p>
+        <p class="risk-percentage">{{ ((getHighRiskCount() / riskProfiles.length) * 100) | number:'1.0-0' }}%</p>
+      </div>
+      <div class="risk-card medium-risk">
+        <h3>Medium Risk</h3>
+        <p class="risk-count">{{ getMediumRiskCount() }}</p>
+        <p class="risk-percentage">{{ ((getMediumRiskCount() / riskProfiles.length) * 100) | number:'1.0-0' }}%</p>
+      </div>
+      <div class="risk-card low-risk">
+        <h3>Low Risk</h3>
+        <p class="risk-count">{{ getLowRiskCount() }}</p>
+        <p class="risk-percentage">{{ ((getLowRiskCount() / riskProfiles.length) * 100) | number:'1.0-0' }}%</p>
+      </div>
+    </div>
+
+    <!-- Portfolio Health -->
+    <div class="portfolio-health">
+      <div class="health-metric">
+        <h3>Portfolio Health</h3>
+        <p class="health-value">{{ portfolioMetrics.healthScore }}/100</p>
+        <div class="health-bar">
+          <div class="health-fill" [style.width.%]="portfolioMetrics.healthScore"></div>
+        </div>
+      </div>
+      <div class="portfolio-stats">
+        <div class="stat">
+          <span class="stat-label">Default Rate</span>
+          <span class="stat-value">{{ portfolioMetrics.defaultRate | number:'1.1-1' }}%</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Recovery Rate</span>
+          <span class="stat-value">{{ portfolioMetrics.recoveryRate | number:'1.1-1' }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="search-filter">
+      <input [(ngModel)]="searchTerm" (ngModelChange)="onSearch()" 
+             type="text" placeholder="Search by farmer name..." class="search-input">
+      <select [(ngModel)]="selectedRiskLevel" (ngModelChange)="onRiskFilterChange()" class="filter-select">
+        <option value="all">All Risk Levels</option>
+        <option value="low">Low Risk</option>
+        <option value="medium">Medium Risk</option>
+        <option value="high">High Risk</option>
+      </select>
+    </div>
+
+    <!-- Risk Profiles Table -->
+    <div class="profiles-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Farmer Name</th>
+            <th>Risk Score</th>
+            <th>Risk Level</th>
+            <th>Farm Size</th>
+            <th>Default History</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let profile of filteredProfiles" class="profile-row">
+            <td class="farmer-name">{{ profile.farmerName }}</td>
+            <td class="risk-score">{{ profile.riskScore }}/100</td>
+            <td>
+              <span class="risk-badge" [style.backgroundColor]="getRiskColor(profile.riskLevel)">
+                {{ profile.riskLevel }}
+              </span>
+            </td>
+            <td>{{ profile.farmSize }} acres</td>
+            <td class="default-history">{{ profile.defaultHistory }}</td>
+            <td class="actions-col">
+              <button class="action-btn">Review</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

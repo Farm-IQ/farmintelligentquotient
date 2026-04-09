@@ -1,0 +1,172 @@
+.attendance-tracker {
+  padding: 20px;
+
+  h2 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .form-section {
+    margin-bottom: 30px;
+    padding: 20px;
+
+    h3 {
+      margin-top: 0;
+      color: #333;
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    input, select, textarea {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+
+      &:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+      }
+    }
+  }
+
+  .btn-primary {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+      background-color: #45a049;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+
+      .stat-value {
+        display: block;
+        font-size: 28px;
+        font-weight: bold;
+        color: #4CAF50;
+        margin-bottom: 8px;
+      }
+
+      .stat-label {
+        display: block;
+        color: #666;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .history-section {
+    padding: 20px;
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: #999;
+    }
+
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        background-color: #f5f5f5;
+      }
+
+      th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #ddd;
+      }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+
+        .status-badge {
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+          text-transform: capitalize;
+
+          &.status-present {
+            background-color: #d4edda;
+            color: #155724;
+          }
+
+          &.status-absent {
+            background-color: #f8d7da;
+            color: #721c24;
+          }
+
+          &.status-leave {
+            background-color: #cfe2ff;
+            color: #084298;
+          }
+
+          &.status-half_day {
+            background-color: #fff3cd;
+            color: #856404;
+          }
+
+          &.status-sick_leave {
+            background-color: #e2e3e5;
+            color: #383d41;
+          }
+        }
+      }
+    }
+  }
+
+  .card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}

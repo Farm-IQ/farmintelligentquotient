@@ -1,0 +1,83 @@
+<div class="task-manager">
+  <h2>Task Management</h2>
+
+  <!-- Task Stats -->
+  <div class="task-stats">
+    <div class="card stat">
+      <span class="label">Total Tasks</span>
+      <span class="value">{{ workerTasks.length }}</span>
+    </div>
+    <div class="card stat">
+      <span class="label">Pending</span>
+      <span class="value pending">{{ (workerTasks | filter: 'pending').length }}</span>
+    </div>
+    <div class="card stat">
+      <span class="label">In Progress</span>
+      <span class="value progress">{{ (workerTasks | filter: 'in_progress').length }}</span>
+    </div>
+    <div class="card stat">
+      <span class="label">Completed</span>
+      <span class="value completed">{{ (workerTasks | filter: 'completed').length }}</span>
+    </div>
+  </div>
+
+  <!-- Assign Task Form -->
+  <div class="card form-section">
+    <h3>Assign New Task</h3>
+    <form [formGroup]="taskForm" (ngSubmit)="assignTask()" class="task-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Task Title *</label>
+          <input type="text" formControlName="task_title" placeholder="Task name" />
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select formControlName="priority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" formControlName="due_date" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="task_description" rows="2" placeholder="Task description"></textarea>
+      </div>
+      <button type="submit" [disabled]="!taskForm.valid || isLoading" class="btn-primary">
+        Assign Task
+      </button>
+    </form>
+  </div>
+
+  <!-- Tasks List -->
+  <div class="card tasks-section">
+    <h3>Worker Tasks</h3>
+    <div *ngIf="workerTasks.length === 0" class="empty-state">
+      No tasks assigned
+    </div>
+    <div *ngFor="let task of workerTasks" class="task-item" [class]="'status-' + task.status">
+      <div class="task-header">
+        <h4>{{ task.task_title }}</h4>
+        <span class="priority-badge" [class]="'priority-' + task.priority">{{ task.priority }}</span>
+      </div>
+      <p *ngIf="task.task_description" class="description">{{ task.task_description }}</p>
+      <div class="task-meta">
+        <span class="due-date">Due: {{ task.due_date | date: 'MMM dd, yyyy' }}</span>
+        <span class="status-badge">{{ task.status }}</span>
+      </div>
+      <div class="task-actions">
+        <select (change)="updateTaskStatus(task, $event)" class="status-select">
+          <option value="pending" [selected]="task.status === 'pending'">Pending</option>
+          <option value="in_progress" [selected]="task.status === 'in_progress'">In Progress</option>
+          <option value="completed" [selected]="task.status === 'completed'">Completed</option>
+          <option value="cancelled" [selected]="task.status === 'cancelled'">Cancelled</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+// ============================================================================
+// FARMER LAYOUT STYLING
+// ============================================================================
+
+// Design Tokens
+$white: #ffffff;
+$light-bg: #f9fafb;
+$spacing-lg: 24px;
+
+.farmer-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $light-bg;
+
+  .farmer-main-content {
+    flex: 1;
+    margin-top: 70px; // Navbar height
+    margin-bottom: 70px; // Footer nav height
+    padding: $spacing-lg;
+    overflow-y: auto;
+
+    @media (max-width: 768px) {
+      margin-top: 60px;
+      margin-bottom: 65px;
+      padding: $spacing-lg 12px;
+    }
+
+    @media (max-width: 480px) {
+      margin-top: 60px;
+      margin-bottom: 60px;
+      padding: $spacing-lg 8px;
+    }
+  }
+}
+
+// Ensure proper scrolling behavior
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}

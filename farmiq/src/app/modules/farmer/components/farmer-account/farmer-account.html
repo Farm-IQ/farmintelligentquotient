@@ -1,0 +1,336 @@
+<div class="account-dashboard">
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading account...</p>
+  </div>
+
+  <div *ngIf="!loading && !error" class="account-content">
+    <!-- Page Header -->
+    <section class="page-header">
+      <h1>My Account & Workers</h1>
+      <p>Manage your farm profile and worker accounts</p>
+    </section>
+
+    <!-- Alert Messages -->
+    <div *ngIf="error" class="alert alert-error">
+      <ion-icon name="alert-circle"></ion-icon>
+      {{ error }}
+      <button (click)="error = null" class="close-btn">✕</button>
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      <ion-icon name="checkmark-circle"></ion-icon>
+      {{ successMessage }}
+    </div>
+
+    <!-- New Worker Password Alert -->
+    <div *ngIf="showNewPasswordAlert" class="alert alert-info password-alert">
+      <div class="password-alert-content">
+        <div class="alert-header">
+          <ion-icon name="key"></ion-icon>
+          <h3>New Worker Account Created</h3>
+          <button (click)="closePasswordAlert()" class="close-btn">✕</button>
+        </div>
+
+        <p class="worker-name">{{ newWorkerName }}</p>
+        <p class="password-note">📝 Save this password securely. The worker must change it on first login.</p>
+
+        <div class="password-display">
+          <code>{{ newWorkerPassword }}</code>
+          <button class="copy-btn" (click)="copyPasswordToClipboard()">
+            <ion-icon [name]="passwordCopied ? 'checkmark' : 'copy'"></ion-icon>
+            {{ passwordCopied ? 'Copied!' : 'Copy' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Section -->
+    <section class="profile-section card" *ngIf="profile">
+      <div class="section-header">
+        <h2>Profile Information</h2>
+        <button class="btn-edit" (click)="toggleEditMode()">
+          <ion-icon [name]="editMode ? 'close' : 'create'"></ion-icon>
+          {{ editMode ? 'Cancel' : 'Edit' }}
+        </button>
+      </div>
+
+      <div *ngIf="!editMode" class="profile-view">
+        <div class="profile-field">
+          <label>First Name</label>
+          <p>{{ profile.first_name }}</p>
+        </div>
+        <div class="profile-field">
+          <label>Last Name</label>
+          <p>{{ profile.last_name }}</p>
+        </div>
+        <div class="profile-field">
+          <label>Email</label>
+          <p>{{ profile.email }}</p>
+        </div>
+        <div class="profile-field" *ngIf="profile.phone_number">
+          <label>Phone</label>
+          <p>{{ profile.phone_number }}</p>
+        </div>
+        <div class="profile-field">
+          <label>Role</label>
+          <p class="role-badge">{{ profile.primary_role | titlecase }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="editMode" class="profile-edit">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" [(ngModel)]="profile.first_name" class="input-field">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" [(ngModel)]="profile.last_name" class="input-field">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="profile.email" class="input-field" disabled>
+          <small class="hint">Email cannot be changed</small>
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" [(ngModel)]="profile.phone_number" class="input-field">
+        </div>
+
+        <button class="btn-save" (click)="saveProfile()" [disabled]="saving">
+          <ion-icon name="checkmark-outline"></ion-icon>
+          {{ saving ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Workers Management Section -->
+    <section class="workers-section card">
+      <div class="section-header">
+        <h2>Farm Workers ({{ workers.length }})</h2>
+        <button class="btn-primary" (click)="toggleAddWorkerForm()" [disabled]="showAddWorkerForm">
+          <ion-icon name="add"></ion-icon>
+          Add Worker
+        </button>
+      </div>
+
+      <!-- Add Worker Form -->
+      <div *ngIf="showAddWorkerForm" class="add-worker-form">
+        <h3>Create New Worker Account</h3>
+
+        <div *ngIf="workerError" class="alert alert-error">
+          {{ workerError }}
+          <button (click)="workerError = null" class="close-btn">✕</button>
+        </div>
+
+        <form [formGroup]="addWorkerForm" (ngSubmit)="addWorker()" class="form-container">
+          <!-- Name Fields -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input
+                id="firstName"
+                type="text"
+                formControlName="firstName"
+                placeholder="e.g. John"
+                class="input-field"
+              />
+              <span class="error-text" *ngIf="addWorkerForm.get('firstName')?.invalid && addWorkerForm.get('firstName')?.touched">
+                First name required (min 2 chars)
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input
+                id="lastName"
+                type="text"
+                formControlName="lastName"
+                placeholder="e.g. Doe"
+                class="input-field"
+              />
+              <span class="error-text" *ngIf="addWorkerForm.get('lastName')?.invalid && addWorkerForm.get('lastName')?.touched">
+                Last name required (min 2 chars)
+              </span>
+            </div>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number *</label>
+            <input
+              id="phoneNumber"
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="+254 712 345 678"
+              class="input-field"
+            />
+            <span class="error-text" *ngIf="addWorkerForm.get('phoneNumber')?.invalid && addWorkerForm.get('phoneNumber')?.touched">
+              Valid phone number required
+            </span>
+          </div>
+
+          <!-- Position & Contract -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="position">Position *</label>
+              <input
+                id="position"
+                type="text"
+                formControlName="position"
+                placeholder="e.g. Field Worker, Supervisor"
+                class="input-field"
+              />
+              <span class="error-text" *ngIf="addWorkerForm.get('position')?.invalid && addWorkerForm.get('position')?.touched">
+                Position required
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="contractType">Contract Type *</label>
+              <select id="contractType" formControlName="contractType" class="input-field">
+                <option value="full-time">Full-time</option>
+                <option value="part-time">Part-time</option>
+                <option value="seasonal">Seasonal</option>
+                <option value="casual">Casual</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Hire Date & ID -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="hireDate">Hire Date *</label>
+              <input
+                id="hireDate"
+                type="date"
+                formControlName="hireDate"
+                class="input-field"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="nationalId">National ID</label>
+              <input
+                id="nationalId"
+                type="text"
+                formControlName="nationalId"
+                placeholder="Optional"
+                class="input-field"
+              />
+            </div>
+          </div>
+
+          <!-- Salary -->
+          <div class="form-group">
+            <label for="salary">Monthly Salary (KES)</label>
+            <input
+              id="salary"
+              type="number"
+              formControlName="salary"
+              placeholder="Optional"
+              class="input-field"
+            />
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="toggleAddWorkerForm()">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="addWorkerForm.invalid || isAddingWorker">
+              <ion-icon name="checkmark-outline"></ion-icon>
+              {{ isAddingWorker ? 'Creating...' : 'Create Worker' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Workers List -->
+      <div *ngIf="!showAddWorkerForm && workers.length > 0" class="workers-list">
+        <table class="workers-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Phone</th>
+              <th>Contract</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let worker of workers" [class.inactive]="worker.status !== 'active'">
+              <td class="worker-name">
+                <div class="name-cell">
+                  <strong>{{ worker.first_name }} {{ worker.last_name }}</strong>
+                  <small *ngIf="worker.national_id">ID: {{ worker.national_id }}</small>
+                </div>
+              </td>
+              <td>{{ worker.position }}</td>
+              <td>{{ worker.phone_number }}</td>
+              <td>
+                <span class="badge badge-contract">{{ worker.contract_type | titlecase }}</span>
+              </td>
+              <td>
+                <span [class]="'badge badge-' + worker.status">
+                  {{ worker.status | titlecase }}
+                </span>
+              </td>
+              <td class="actions">
+                <div class="action-buttons">
+                  <button 
+                    class="btn-icon btn-key" 
+                    (click)="regenerateWorkerPassword(worker)"
+                    title="Regenerate password"
+                  >
+                    <ion-icon name="key"></ion-icon>
+                  </button>
+
+                  <div class="dropdown">
+                    <button class="btn-icon btn-menu" title="More options">
+                      <ion-icon name="ellipsis-vertical"></ion-icon>
+                    </button>
+                    <div class="dropdown-menu">
+                      <button *ngIf="worker.status === 'active'" (click)="suspendWorker(worker)" class="dropdown-item suspend">
+                        <ion-icon name="pause"></ion-icon>
+                        Suspend
+                      </button>
+                      <button *ngIf="worker.status !== 'active'" (click)="reactivateWorker(worker)" class="dropdown-item activate">
+                        <ion-icon name="play"></ion-icon>
+                        Reactivate
+                      </button>
+                      <button (click)="deactivateWorker(worker)" class="dropdown-item danger">
+                        <ion-icon name="close-circle"></ion-icon>
+                        Deactivate
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="workers.length === 0 && !showAddWorkerForm" class="empty-state">
+        <ion-icon name="people"></ion-icon>
+        <p>No workers added yet</p>
+        <small>Create your first worker account to get started</small>
+      </div>
+    </section>
+
+    <!-- Logout Button -->
+    <section class="logout-section card">
+      <button class="btn-logout" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Logout
+      </button>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<div class="cooperative-insights">
+  <header class="insights-header">
+    <h1>Cooperative Insights</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <div *ngIf="!loading && insights" class="insights-content">
+    <!-- Market Trend -->
+    <div class="trend-card">
+      <h3>Market Trend</h3>
+      <div class="trend-display">
+        <div class="trend-icon" [style.color]="getMarketTrendColor()">
+          {{ getTrendIcon(insights.marketTrendValue) }}
+        </div>
+        <div class="trend-info">
+          <p class="trend-status">{{ getMarketTrend() }}</p>
+          <p class="trend-description">{{ insights.marketDescription }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="metrics-section">
+      <h3>Key Metrics</h3>
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <p class="metric-label">Total Production</p>
+          <p class="metric-value">{{ getMetricValue('totalProduction') }}</p>
+        </div>
+        <div class="metric-item">
+          <p class="metric-label">Avg Yield</p>
+          <p class="metric-value">{{ getMetricValue('avgYield') }}%</p>
+        </div>
+        <div class="metric-item">
+          <p class="metric-label">Quality Score</p>
+          <p class="metric-value">{{ getMetricValue('qualityScore') }}/100</p>
+        </div>
+        <div class="metric-item">
+          <p class="metric-label">Market Price</p>
+          <p class="metric-value">{{ getMetricValue('marketPrice') | currency }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Performers -->
+    <div class="performers-section">
+      <h3>Top Performing Members</h3>
+      <div class="performers-list">
+        <div *ngFor="let performer of getTopPerformers()" class="performer-item">
+          <div class="performer-rank">🏆</div>
+          <div class="performer-info">
+            <p class="performer-name">{{ performer.name }}</p>
+            <p class="performer-score">Score: {{ performer.score }}</p>
+          </div>
+          <div class="performer-badge">{{ performer.achievement }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recommendations-section">
+      <h3>Recommendations</h3>
+      <ul class="recommendations-list">
+        <li *ngFor="let rec of insights.recommendations" class="recommendation-item">
+          <span class="rec-icon">→</span>
+          <span class="rec-text">{{ rec }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

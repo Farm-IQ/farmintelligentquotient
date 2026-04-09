@@ -1,0 +1,85 @@
+<div class="member-management">
+  <header class="management-header">
+    <h1>Member Management</h1>
+    <button (click)="showAddForm = !showAddForm" class="add-btn">+ Add Member</button>
+  </header>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Add Member Form -->
+  <div *ngIf="showAddForm" class="form-card">
+    <h3>Add New Member</h3>
+    <form (ngSubmit)="addMember()">
+      <div class="form-group">
+        <label>Name *</label>
+        <input [(ngModel)]="newMember.name" name="name" type="text" required>
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input [(ngModel)]="newMember.email" name="email" type="email" required>
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input [(ngModel)]="newMember.phone" name="phone" type="tel">
+      </div>
+      <div class="form-group">
+        <label>Farm Size (acres)</label>
+        <input [(ngModel)]="newMember.farmSize" name="farmSize" type="number">
+      </div>
+      <div class="form-group">
+        <label>Crop Type</label>
+        <input [(ngModel)]="newMember.cropType" name="cropType" type="text">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Add Member</button>
+        <button type="button" (click)="showAddForm = false" class="btn-secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="search-filter">
+    <input [(ngModel)]="searchTerm" (ngModelChange)="onSearch()" 
+           type="text" placeholder="Search members..." class="search-input">
+    <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()" class="filter-select">
+      <option value="all">All Status</option>
+      <option value="active">Active</option>
+      <option value="pending">Pending</option>
+      <option value="suspended">Suspended</option>
+    </select>
+  </div>
+
+  <!-- Members Table -->
+  <div class="members-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>FIQ Score</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let member of filteredMembers" class="member-row">
+          <td class="name-col">{{ member.name }}</td>
+          <td>{{ member.email }}</td>
+          <td class="score-col">{{ member.fiqScore || 0 }}</td>
+          <td>
+            <span class="status-badge" [style.backgroundColor]="getStatusColor(member.status)">
+              {{ member.status }}
+            </span>
+          </td>
+          <td class="actions-col">
+            <button (click)="updateMemberStatus(member.id, 'active')" class="action-link">Activate</button>
+            <button (click)="removeMember(member.id)" class="action-link delete">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

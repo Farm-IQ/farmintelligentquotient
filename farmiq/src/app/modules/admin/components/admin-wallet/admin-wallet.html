@@ -1,0 +1,134 @@
+<div class="wallet-dashboard">
+  <!-- Compliance Warning -->
+  <div *ngIf="showComplianceWarning && complianceInfo" class="compliance-banner">
+    <div class="compliance-content">
+      <h3>⚠️ Compliance Notice</h3>
+      <p>{{ complianceInfo.disclaimer }}</p>
+      <p><strong>Status:</strong> {{ complianceInfo.status }} | <strong>Network:</strong> {{ complianceInfo.network }}</p>
+    </div>
+    <button class="btn-close-banner" (click)="dismissComplianceWarning()">×</button>
+  </div>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <h1>⚙️ Admin Wallet</h1>
+  </section>
+
+  <!-- Not Connected -->
+  <section *ngIf="!connectedAccount" class="web3-connect-section">
+    <h2>Connect Your Web3 Wallet</h2>
+    <p class="description">Connect HashPack or MetaMask to manage FQ tokens and admin functions</p>
+    
+    <div class="wallet-buttons">
+      <button 
+        class="btn btn-primary btn-wallet"
+        (click)="connectHashPack()"
+        [disabled]="isConnecting">
+        <span class="wallet-icon">🔐</span>
+        <span *ngIf="!isConnecting">Connect HashPack</span>
+        <span *ngIf="isConnecting">Connecting...</span>
+      </button>
+
+      <button 
+        class="btn btn-primary btn-wallet"
+        (click)="connectMetaMask()"
+        [disabled]="isConnecting">
+        <span class="wallet-icon">🦊</span>
+        <span *ngIf="!isConnecting">Connect MetaMask</span>
+        <span *ngIf="isConnecting">Connecting...</span>
+      </button>
+    </div>
+
+    <div class="wallet-info">
+      <p><strong>Supported Networks:</strong> Hedera {{ complianceInfo?.network || 'Testnet' }}</p>
+      <p><strong>Token:</strong> FQ (Utility Token)</p>
+      <p class="disclaimer">{{ complianceInfo?.disclaimer }}</p>
+    </div>
+  </section>
+
+  <!-- Connected -->
+  <section *ngIf="connectedAccount" class="web3-connected-section">
+    <div class="wallet-header">
+      <div class="wallet-info-card">
+        <span class="label">Connected Wallet</span>
+        <div class="address">{{ connectedAccount.address | slice:0:10 }}...{{ connectedAccount.address | slice:-8 }}</div>
+        <p class="provider">{{ connectedAccount.provider | uppercase }} • {{ connectedAccount.network }}</p>
+      </div>
+      <button class="btn btn-danger" (click)="disconnectWeb3Wallet()">Disconnect</button>
+    </div>
+
+    <!-- FQ Token Balance -->
+    <div class="balance-card" *ngIf="fqTokenBalance">
+      <span class="label">FQ Token Balance</span>
+      <div class="amount">{{ fqTokenBalance.balance | number:'1.0-8' }} FQ</div>
+      <span class="token-info">{{ fqTokenBalance.name }} ({{ fqTokenBalance.symbol }})</span>
+    </div>
+
+    <!-- Transfer Section -->
+    <section class="transfer-section">
+      <h3>Transfer FQ Tokens</h3>
+      
+      <form [formGroup]="web3TransferForm" (ngSubmit)="submitWeb3Transfer()" *ngIf="showTransferForm" class="transfer-form">
+        <div class="form-group">
+          <label>Recipient Address</label>
+          <input 
+            type="text" 
+            formControlName="recipientAddress"
+            placeholder="0x..." 
+            class="form-input">
+          <span class="error-text" *ngIf="web3TransferForm.get('recipientAddress')?.hasError('required')">
+            Recipient address is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Amount (FQ)</label>
+          <input 
+            type="number" 
+            formControlName="amount"
+            placeholder="0.00" 
+            step="0.00000001"
+            class="form-input">
+          <span class="error-text" *ngIf="web3TransferForm.get('amount')?.hasError('required')">
+            Amount is required
+          </span>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="transferLoading || web3TransferForm.invalid">
+            {{ transferLoading ? 'Transferring...' : 'Send FQ' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelTransfer()">Cancel</button>
+        </div>
+      </form>
+
+      <button *ngIf="!showTransferForm" class="btn btn-primary" (click)="showTransferForm = true">
+        Transfer FQ Tokens
+      </button>
+    </section>
+
+    <!-- Transaction History -->
+    <section class="transactions-section" *ngIf="web3Transactions && web3Transactions.length > 0">
+      <h3>Recent Transactions</h3>
+      <div class="transaction-item" *ngFor="let tx of web3Transactions">
+        <div class="tx-info">
+          <span class="description">{{ tx.type === 'sent' ? 'Sent' : 'Received' }} FQ</span>
+          <span class="tx-hash">{{ tx.hash | slice:0:10 }}...{{ tx.hash | slice:-8 }}</span>
+        </div>
+        <span class="amount" [class]="tx.type">
+          {{ tx.type === 'sent' ? '-' : '+' }}{{ tx.amount | number:'1.0-8' }} FQ
+        </span>
+      </div>
+    </section>
+
+    <div *ngIf="!web3Transactions || web3Transactions.length === 0" class="no-transactions">
+      <p>No recent transactions</p>
+    </div>
+  </section>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-banner">
+    <p>{{ error }}</p>
+    <button class="btn-close-banner" (click)="error = null">×</button>
+  </div>
+</div>

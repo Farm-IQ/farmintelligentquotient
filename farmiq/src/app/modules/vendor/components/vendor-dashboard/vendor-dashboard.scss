@@ -1,0 +1,108 @@
+.vendor-dashboard {
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+  }
+
+  .btn-chat,
+  .btn-signout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .btn-chat {
+    background-color: #3b82f6;
+    color: white;
+
+    &:hover {
+      background-color: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-signout {
+    background-color: #e5e7eb;
+    color: #1f2937;
+
+    &:hover {
+      background-color: #d1d5db;
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .chat-icon,
+  .signout-icon {
+    font-size: 16px;
+  }
+
+  .btn-text {
+    display: inline;
+  }
+
+  .coming-soon {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .dashboard-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .btn-chat,
+    .btn-signout {
+      .btn-text {
+        display: none;
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<div class="callback-container">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>{{ message }}</p>
+  </div>
+
+  <!-- ✅ FIX: OAuth role selection modal -->
+  <app-oauth-role-selection-modal
+    [isVisible]="showRoleSelectionModal"
+    [provider]="oauthProvider"
+    [userEmail]="oauthUserEmail"
+    (roleSelected)="onRoleSelected($event)"
+    (closed)="onRoleSelectionClosed()"
+  ></app-oauth-role-selection-modal>

@@ -1,0 +1,296 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="worker-toolbar">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="toolbar-title">{{ userRole() === 'supervisor' ? 'Workforce Management' : 'Work Dashboard' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="refresh-btn" (click)="refreshDashboard()" [disabled]="refreshing()">
+        <ion-icon name="refresh" slot="icon-only" [class.spinning]="refreshing()"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="worker-content">
+  <!-- Loading State -->
+  <ion-spinner *ngIf="loading()" name="crescent" class="loading-spinner"></ion-spinner>
+
+  <!-- Role-Based Welcome -->
+  <div class="welcome-section ion-padding">
+    <h1>{{ userRole() === 'supervisor' ? 'Team Oversight' : 'My Performance' }} 👷</h1>
+    <p class="subtitle">
+      {{ userRole() === 'supervisor' 
+        ? 'Monitor your workforce and manage operations' 
+        : 'Track your attendance and performance' }}
+    </p>
+  </div>
+
+  <!-- Supervisor: Workforce Metrics (Role-Based) -->
+  <div *ngIf="canManageWorkers()" class="metrics-grid ion-padding-horizontal">
+    <div class="metric-card metric-primary">
+      <div class="metric-number">{{ activeWorkers() }}</div>
+      <div class="metric-label">Active Workers</div>
+      <div class="metric-subtext">Today's workforce</div>
+      <ion-icon name="people"></ion-icon>
+    </div>
+
+    <div class="metric-card metric-success">
+      <div class="metric-number">{{ attendanceRate() }}%</div>
+      <div class="metric-label">Attendance Rate</div>
+      <div class="metric-subtext" [ngClass]="attendanceRate() > 85 ? 'text-success' : 'text-warning'">
+        {{ attendanceRate() > 85 ? 'Excellent' : 'Needs Attention' }}
+      </div>
+      <ion-icon name="checkmark-circle"></ion-icon>
+    </div>
+
+    <div class="metric-card metric-info">
+      <div class="metric-number">{{ punchedInWorkers() }}</div>
+      <div class="metric-label">Punched In</div>
+      <div class="metric-subtext">Currently working</div>
+      <ion-icon name="time"></ion-icon>
+    </div>
+
+    <div class="metric-card metric-warning">
+      <div class="metric-number">{{ overdueTasksCount() }}</div>
+      <div class="metric-label">Overdue Tasks</div>
+      <div class="metric-subtext">Need attention</div>
+      <ion-icon name="warning"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Field Worker: Personal Metrics -->
+  <div *ngIf="!canManageWorkers()" class="metrics-grid ion-padding-horizontal">
+    <div class="metric-card metric-primary">
+      <div class="metric-number">{{ isPunchedIn() ? 'IN' : 'OUT' }}</div>
+      <div class="metric-label">Status</div>
+      <div class="metric-subtext">{{ currentTime() | date:'hh:mm a' }}</div>
+      <ion-icon [name]="isPunchedIn() ? 'checkmark-circle' : 'power'"></ion-icon>
+    </div>
+
+    <div class="metric-card metric-success">
+      <div class="metric-number">{{ todayHours() || 0 | number:'1.1-1' }}h</div>
+      <div class="metric-label">Hours Worked</div>
+      <div class="metric-subtext">Today</div>
+      <ion-icon name="timer"></ion-icon>
+    </div>
+
+    <div class="metric-card metric-info">
+      <div class="metric-number">{{ myActiveTasks().length }}</div>
+      <div class="metric-label">Tasks Assigned</div>
+      <div class="metric-subtext">Active</div>
+      <ion-icon name="checkbox"></ion-icon>
+    </div>
+
+    <div class="metric-card metric-warning">
+      <div class="metric-number">{{ myPerformanceScore() | number:'1.1-1' }}/5</div>
+      <div class="metric-label">Performance</div>
+      <div class="metric-subtext">Rating</div>
+      <ion-icon name="star"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Supervisor: Punch In/Out Summary -->
+  <ion-card *ngIf="canManageWorkers()" class="ion-margin">
+    <ion-card-header class="card-header-minimal">
+      <ion-card-title>Today's Attendance 📋</ion-card-title>
+      <ion-button fill="clear" size="small" routerLink="/worker/attendance">
+        View All
+        <ion-icon name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="attendance-summary">
+        <div class="status-item">
+          <div class="status-badge present">P</div>
+          <div>
+            <div class="status-count">{{ presentWorkers() }}</div>
+            <div class="status-label">Present</div>
+          </div>
+        </div>
+        <div class="status-item">
+          <div class="status-badge late">L</div>
+          <div>
+            <div class="status-count">{{ lateWorkers() }}</div>
+            <div class="status-label">Late</div>
+          </div>
+        </div>
+        <div class="status-item">
+          <div class="status-badge absent">A</div>
+          <div>
+            <div class="status-count">{{ absentWorkers() }}</div>
+            <div class="status-label">Absent</div>
+          </div>
+        </div>
+        <div class="status-item">
+          <div class="status-badge leave">L</div>
+          <div>
+            <div class="status-count">{{ onLeaveWorkers() }}</div>
+            <div class="status-label">On Leave</div>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Field Worker: Punch In/Out Buttons -->
+  <ion-card *ngIf="!canManageWorkers() && selectedWorker()" class="ion-margin punch-card">
+    <ion-card-header class="card-header-minimal">
+      <ion-card-title>Time Tracking ⏱️</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="punch-status">
+        <div class="status-display" [ngClass]="'status-' + (isPunchedIn() ? 'in' : 'out')">
+          <div class="status-time">{{ currentTime() | date:'hh:mm:ss a' }}</div>
+          <div class="status-text">{{ isPunchedIn() ? 'Punched In' : 'Punched Out' }}</div>
+        </div>
+      </div>
+
+      <div class="punch-buttons">
+        <ion-button *ngIf="!isPunchedIn()" expand="block" color="success" size="large" (click)="punchIn()">
+          <ion-icon name="play-circle" slot="start"></ion-icon>
+          Punch In
+        </ion-button>
+        <ion-button *ngIf="isPunchedIn()" expand="block" color="danger" size="large" (click)="punchOut()">
+          <ion-icon name="stop-circle" slot="start"></ion-icon>
+          Punch Out
+        </ion-button>
+      </div>
+
+      <div class="punch-info">
+        <div class="info-row">
+          <span>Today's Hours:</span>
+          <span class="value">{{ todayHours() | number:'1.1-1' }}h</span>
+        </div>
+        <div class="info-row">
+          <span>Last Punch:</span>
+          <span class="value">{{ lastPunchTime() ? (lastPunchTime() | date:'hh:mm a') : 'N/A' }}</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Supervisor: Payroll Summary -->
+  <ion-card *ngIf="canViewPayroll()" class="ion-margin">
+    <ion-card-header class="card-header-minimal">
+      <ion-card-title>Monthly Payroll 💰</ion-card-title>
+      <ion-button fill="clear" size="small" routerLink="/worker/payroll">
+        Manage
+        <ion-icon name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="payroll-summary">
+        <div class="payroll-item">
+          <div class="label">Total Payroll</div>
+          <div class="value">KES {{ totalPayroll() | number:'0,0' }}</div>
+        </div>
+        <div class="payroll-item">
+          <div class="label">Workers Processed</div>
+          <div class="value">{{ workers().length }}</div>
+        </div>
+        <div class="payroll-item">
+          <div class="label">Processing Status</div>
+          <div class="value badge" [ngClass]="'badge-pending'">Pending</div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Alerts & Notifications -->
+  <div *ngIf="alerts().length > 0" class="alerts-section ion-padding-horizontal">
+    <h3>Alerts 🔔</h3>
+    <div *ngFor="let alert of alerts()" class="alert-item" [ngClass]="'alert-' + alert.type">
+      <ion-icon [name]="alert.icon"></ion-icon>
+      <div>
+        <div class="alert-title">{{ alert.title }}</div>
+        <div class="alert-message">{{ alert.message }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks Section -->
+  <ion-card class="ion-margin">
+    <ion-card-header class="card-header-minimal">
+      <ion-card-title>{{ canManageWorkers() ? 'Team Tasks' : 'My Tasks' }} 📋</ion-card-title>
+      <ion-button fill="clear" size="small" routerLink="/worker/tasks">
+        View All
+        <ion-icon name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="inset">
+        <ion-item *ngFor="let task of (canManageWorkers() ? activeTasks() : myActiveTasks()).slice(0, 5)"
+                  [ngClass]="'task-' + task.priority">
+          <ion-icon [name]="task.priority === 'high' ? 'alert-circle' : 'checkmark-circle'" 
+                    [color]="task.priority === 'high' ? 'danger' : 'success'" 
+                    slot="start"></ion-icon>
+          <ion-label>
+            <h3>{{ task.title }}</h3>
+            <p>{{ task.description | slice:0:50 }}...</p>
+          </ion-label>
+          <ion-badge slot="end" [color]="task.priority === 'high' ? 'danger' : 'success'">
+            {{ task.status }}
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Workforce Performance (Supervisor) -->
+  <ion-card *ngIf="canViewAnalytics()" class="ion-margin">
+    <ion-card-header class="card-header-minimal">
+      <ion-card-title>Performance Distribution 📊</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="performance-grid">
+        <div class="perf-item">
+          <div class="perf-badge excellent">★★★★★</div>
+          <div>
+            <div class="perf-label">Excellent (4.5-5)</div>
+            <div class="perf-count">{{ excellentPerformance() }}</div>
+          </div>
+        </div>
+        <div class="perf-item">
+          <div class="perf-badge good">★★★★☆</div>
+          <div>
+            <div class="perf-label">Good (3.5-4.4)</div>
+            <div class="perf-count">{{ goodPerformance() }}</div>
+          </div>
+        </div>
+        <div class="perf-item">
+          <div class="perf-badge fair">★★★☆☆</div>
+          <div>
+            <div class="perf-label">Fair (2.5-3.4)</div>
+            <div class="perf-count">{{ averagePerformance() }}</div>
+          </div>
+        </div>
+        <div class="perf-item">
+          <div class="perf-badge poor">★★☆☆☆</div>
+          <div>
+            <div class="perf-label">Needs Improvement (<2.5)</div>
+            <div class="perf-count">{{ poorPerformance() }}</div>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons ion-padding">
+    <ion-button *ngIf="canManageWorkers()" expand="block" color="primary" routerLink="/worker/list">
+      <ion-icon name="people" slot="start"></ion-icon>
+      Manage Workers
+    </ion-button>
+    <ion-button *ngIf="canViewPayroll()" expand="block" color="secondary" routerLink="/worker/payroll">
+      <ion-icon name="card" slot="start"></ion-icon>
+      Payroll Manager
+    </ion-button>
+    <ion-button expand="block" color="tertiary" routerLink="/worker/tasks">
+      <ion-icon name="checkbox" slot="start"></ion-icon>
+      Tasks
+    </ion-button>
+  </div>
+
+  <div style="height: 100px;"></div>
+</ion-content>

@@ -1,0 +1,66 @@
+<div class="cooperative-wallet">
+  <header class="wallet-header">
+    <h1>Group Wallet</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <p class="balance-label">Current Balance</p>
+    <p class="balance-amount">{{ formatCurrency(walletBalance) }}</p>
+    <p class="currency">{{ currency }}</p>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button (click)="showTransferForm = !showTransferForm" class="btn-primary">
+      {{ showTransferForm ? 'Cancel' : 'Transfer Funds' }}
+    </button>
+  </div>
+
+  <!-- Transfer Form -->
+  <div *ngIf="showTransferForm" class="transfer-form-card">
+    <h3>Transfer Funds</h3>
+    <form (ngSubmit)="submitTransfer()">
+      <div class="form-group">
+        <label>Amount *</label>
+        <input [(ngModel)]="transferForm.amount" name="amount" type="number" step="0.01" required>
+        <p class="help-text">Available: {{ formatCurrency(walletBalance) }}</p>
+      </div>
+      <div class="form-group">
+        <label>Recipient Cooperative *</label>
+        <input [(ngModel)]="transferForm.recipientCoop" name="recipientCoop" type="text" required>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="transferForm.description" name="description" rows="3"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Confirm Transfer</button>
+        <button type="button" (click)="cancelTransfer()" class="btn-secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="transactions-section" *ngIf="!loading && transactions.length > 0">
+    <h3>Recent Transactions</h3>
+    <div class="transactions-list">
+      <div *ngFor="let txn of transactions" class="transaction-item" [ngClass]="getTransactionClass(txn.type)">
+        <div class="txn-info">
+          <p class="txn-description">{{ txn.description }}</p>
+          <p class="txn-date">{{ txn.date | date }}</p>
+        </div>
+        <div class="txn-amount" [class.credit]="txn.type === 'credit'" [class.debit]="txn.type === 'debit'">
+          {{ txn.type === 'credit' ? '+' : '-' }} {{ formatCurrency(txn.amount) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

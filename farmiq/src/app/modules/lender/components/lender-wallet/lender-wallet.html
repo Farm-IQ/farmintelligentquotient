@@ -1,0 +1,67 @@
+<div class="lender-wallet">
+  <header class="wallet-header">
+    <h1>Lender Wallet</h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <p class="balance-label">Available Balance</p>
+    <p class="balance-amount">{{ formatCurrency(walletBalance) }}</p>
+    <p class="currency">{{ currency }}</p>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button (click)="showTransferForm = !showTransferForm" class="btn-primary">
+      {{ showTransferForm ? 'Cancel' : 'Disburse Loan' }}
+    </button>
+  </div>
+
+  <!-- Disbursement Form -->
+  <div *ngIf="showTransferForm" class="transfer-form-card">
+    <h3>Loan Disbursement</h3>
+    <form (ngSubmit)="submitTransfer()">
+      <div class="form-group">
+        <label>Loan Amount *</label>
+        <input [(ngModel)]="transferForm.amount" name="amount" type="number" step="1000" required>
+        <p class="help-text">Available: {{ formatCurrency(walletBalance) }}</p>
+      </div>
+      <div class="form-group">
+        <label>Loan ID *</label>
+        <input [(ngModel)]="transferForm.loanId" name="loanId" type="text" required>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="transferForm.description" name="description" rows="3"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Disburse Funds</button>
+        <button type="button" (click)="cancelTransfer()" class="btn-secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="transactions-section" *ngIf="!loading && transactions.length > 0">
+    <h3>Recent Transactions</h3>
+    <div class="transactions-list">
+      <div *ngFor="let txn of transactions" class="transaction-item" [ngClass]="getTransactionClass(txn.type)">
+        <div class="txn-header">
+          <p class="txn-description">{{ txn.description }}</p>
+          <div class="txn-amount" [class.credit]="txn.type === 'credit'" [class.debit]="txn.type === 'debit'">
+            {{ txn.type === 'credit' ? '+' : '-' }} {{ formatCurrency(txn.amount) }}
+          </div>
+        </div>
+        <p class="txn-date">{{ txn.date | date }}</p>
+        <p class="txn-id" *ngIf="txn.loanId">Loan ID: {{ txn.loanId }}</p>
+      </div>
+    </div>
+  </div>
+</div>

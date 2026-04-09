@@ -1,0 +1,75 @@
+<div class="admin-dashboard">
+  <header class="dashboard-header">
+    <h1>System Dashboard</h1>
+    <div class="header-actions">
+      <button class="btn-chat" (click)="goToChatbot()" title="FarmGrow Chat Assistant">
+        <span class="chat-icon">💬</span>
+        <span class="btn-text">FarmGrow</span>
+      </button>
+      <button class="btn-signout" (click)="signOut()" title="Sign out">
+        <span class="signout-icon">🚪</span>
+        <span class="btn-text">Sign Out</span>
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <!-- System Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <h3>Total Users</h3>
+      <p class="metric-value">{{ systemMetrics.totalUsers | number }}</p>
+      <p class="metric-change">{{ systemMetrics.activeUsers }} active</p>
+    </div>
+    <div class="metric-card">
+      <h3>Platform Revenue</h3>
+      <p class="metric-value">{{ systemMetrics.platformRevenue | currency }}</p>
+      <p class="metric-label">Total earnings</p>
+    </div>
+    <div class="metric-card">
+      <h3>System Health</h3>
+      <p class="metric-value" [style.color]="getHealthColor(systemMetrics.systemHealth)">{{ systemMetrics.systemHealth }}%</p>
+      <p class="metric-label">{{ systemMetrics.uptime }}</p>
+    </div>
+    <div class="metric-card">
+      <h3>Avg Response</h3>
+      <p class="metric-value">{{ systemMetrics.avgResponseTime }}</p>
+      <p class="metric-label">API performance</p>
+    </div>
+  </div>
+
+  <!-- Key Statistics -->
+  <div class="statistics-section">
+    <h2>Key Statistics</h2>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <p class="stat-label">Total Farms</p>
+        <p class="stat-value">{{ systemMetrics.totalFarms | number }}</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-label">Active Loans</p>
+        <p class="stat-value">{{ systemMetrics.totalLoans | number }}</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-label">System Uptime</p>
+        <p class="stat-value">{{ systemMetrics.uptime }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <div class="activities-section">
+    <h2>Recent Activities</h2>
+    <div class="activities-list">
+      <div *ngFor="let activity of recentActivities" class="activity-item">
+        <p class="activity-description">{{ activity.description }}</p>
+        <p class="activity-time">{{ activity.timestamp | date }}</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,568 @@
+<div class="farm-setup-wizard">
+  <!-- Header -->
+  <header class="wizard-header">
+    <h1>🌾 Farm Setup Wizard</h1>
+    <p>Complete your farm profile to get started</p>
+  </header>
+
+  <!-- Progress Indicators -->
+  <div class="progress-container">
+    <div class="progress-bar" [style.width]="(currentStep / totalSteps) * 100 + '%'"></div>
+    <div class="steps-indicator">
+      <div *ngFor="let step of steps; let i = index" 
+           class="step-dot" 
+           [class.active]="currentStep === step.stepNumber"
+           [class.completed]="step.completed">
+        <span>{{ step.stepNumber }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <ion-icon name="alert-circle"></ion-icon>
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    <ion-icon name="checkmark-circle"></ion-icon>
+    {{ successMessage }}
+  </div>
+
+  <!-- Step 1: Farm Information -->
+  <div *ngIf="currentStep === 1" class="step-container" [@slideAnimation]>
+    <div class="step-header">
+      <h2>{{ steps[0].title }}</h2>
+      <p>{{ steps[0].description }}</p>
+    </div>
+
+    <form [formGroup]="farmInfoForm" class="form-container">
+      <div class="form-group">
+        <label>Farm Name *</label>
+        <input type="text" 
+               formControlName="farmName" 
+               placeholder="e.g., Green Valley Farm"
+               class="form-control">
+        <small *ngIf="farmInfoForm.get('farmName')?.invalid && farmInfoForm.get('farmName')?.touched" 
+               class="error-text">
+          Farm name must be at least 3 characters
+        </small>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>County *</label>
+          <select formControlName="county" class="form-control">
+            <option value="">Select County</option>
+            <option value="nairobi">Nairobi</option>
+            <option value="kiambu">Kiambu</option>
+            <option value="muranga">Murang'a</option>
+            <option value="nyeri">Nyeri</option>
+            <option value="nakuru">Nakuru</option>
+            <option value="uasin_gishu">Uasin Gishu</option>
+            <option value="kericho">Kericho</option>
+            <option value="bomet">Bomet</option>
+            <option value="kisii">Kisii</option>
+            <option value="nyamira">Nyamira</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Sub-County *</label>
+          <input type="text" 
+                 formControlName="subCounty" 
+                 placeholder="e.g., Kikuyu"
+                 class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Location/Area *</label>
+        <input type="text" 
+               formControlName="location" 
+               placeholder="e.g., Near Kenyatta Road"
+               class="form-control">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Farm Size *</label>
+          <input type="number" 
+                 formControlName="farmSize"
+                 (change)="onFarmSizeChange()"
+                 placeholder="Enter size"
+                 step="0.01"
+                 min="0.01"
+                 class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Unit *</label>
+          <select formControlName="farmSizeUnit"
+                  (change)="onFarmSizeChange()"
+                  class="form-control">
+            <option value="acres">Acres</option>
+            <option value="hectares">Hectares</option>
+            <option value="square_meters">Square Meters</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Farm Size Information Display -->
+      <div class="farm-size-info" *ngIf="totalFarmSizeHectares > 0" style="background: #f0f8ff; padding: 12px; border-radius: 4px; margin-bottom: 15px; border-left: 4px solid #28a745;">
+        <p style="margin: 0; font-size: 0.9em;"><strong>📊 Farm Size Summary:</strong></p>
+        <p style="margin: 5px 0; font-size: 0.85em;">Total Farm: <strong>{{ totalFarmSizeHectares | number:'1.2-2' }} ha</strong></p>
+        <p style="margin: 5px 0; font-size: 0.85em;">Allocated: <strong>{{ totalAllocatedAreaHectares | number:'1.2-2' }} ha</strong></p>
+        <p style="margin: 5px 0; font-size: 0.85em; color: #28a745;"><strong>✓ Available: {{ remainingFarmAreaHectares | number:'1.2-2' }} ha</strong></p>
+      </div>
+
+      <div class="form-group">
+        <label>Primary Crop/Operation *</label>
+        <select formControlName="primaryCrop" class="form-control">
+          <option value="">Select Crop or Operation</option>
+          <!-- Field Crops -->
+          <optgroup label="🌾 Field Crops">
+            <option value="maize">Maize</option>
+            <option value="wheat">Wheat</option>
+            <option value="rice">Rice</option>
+            <option value="beans">Beans</option>
+            <option value="peas">Peas</option>
+            <option value="potatoes">Potatoes</option>
+            <option value="cassava">Cassava</option>
+            <option value="sugarcane">Sugarcane</option>
+            <option value="sunflower">Sunflower</option>
+            <option value="cotton">Cotton</option>
+          </optgroup>
+          <!-- Cash Crops with Specialty Features -->
+          <optgroup label="💰 Cash Crops (Premium Support)">
+            <option value="coffee">☕ Coffee - Paddock Management</option>
+            <option value="tea">🫖 Tea - Plucking Schedule</option>
+            <option value="avocado">🥑 Avocado - Tree Management</option>
+            <option value="mango">🥭 Mango - Orchard Management</option>
+            <option value="citrus">🍊 Citrus - Pest Control</option>
+          </optgroup>
+          <!-- Vegetables -->
+          <optgroup label="🥬 Vegetables">
+            <option value="tomatoes">Tomatoes</option>
+            <option value="onions">Onions</option>
+            <option value="carrots">Carrots</option>
+            <option value="cabbage">Cabbage</option>
+            <option value="kale">Kale</option>
+          </optgroup>
+          <!-- Livestock Operations -->
+          <optgroup label="🐄 Livestock Operations (Specialized Modules)">
+            <option value="dairy">🥛 Dairy - Milk Production &amp; Breeding</option>
+            <option value="beef">🐄 Beef - Cattle Fattening</option>
+            <option value="poultry">🐔 Poultry - Layers &amp; Broilers</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Farming Method *</label>
+        <select formControlName="farmingMethod" class="form-control">
+          <option value="">Select Method</option>
+          <option value="rain_fed">Rain-Fed</option>
+          <option value="irrigated">Irrigated</option>
+          <option value="greenhouse">Greenhouse</option>
+          <option value="mixed">Mixed</option>
+          <option value="organic">Organic</option>
+          <option value="conventional">Conventional</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Farm Type *</label>
+        <select formControlName="farmType" class="form-control">
+          <option value="Mixed">Mixed Farming</option>
+          <option value="Crop">Crop Only</option>
+          <option value="Livestock">Livestock Only</option>
+          <option value="Organic">Organic</option>
+          <option value="Commercial">Commercial</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Description (Optional)</label>
+        <textarea formControlName="description" 
+                  placeholder="Add any additional details about your farm"
+                  class="form-control"
+                  rows="3"></textarea>
+      </div>
+    </form>
+  </div>
+
+  <!-- Step 2: Add Parcels -->
+  <div *ngIf="currentStep === 2" class="step-container" [@slideAnimation]>
+    <div class="step-header">
+      <h2>{{ steps[1].title }}</h2>
+      <p>{{ steps[1].description }}</p>
+    </div>
+
+    <form [formGroup]="parcelForm" class="form-container">
+      <h3>Add a New Parcel/Unit</h3>
+
+      <div class="form-group">
+        <label>Parcel Name *</label>
+        <input type="text" 
+               formControlName="parcelName" 
+               placeholder="e.g., North Field, Dairy Unit A"
+               class="form-control">
+      </div>
+
+      <!-- Parcel Type Selector: Crop vs Livestock -->
+      <div class="form-group parcel-type-selector" style="background: #f9f9f9; padding: 12px; border-radius: 4px; border: 1px solid #ddd;">
+        <label>What type of parcel? *</label>
+        <div style="display: flex; gap: 15px; margin-top: 10px;">
+          <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="radio" 
+                   formControlName="parcelType"
+                   value="crop"
+                   (change)="onParcelTypeChange('crop')"
+                   style="margin-right: 5px;">
+            <span>🌾 <strong>Crop Production</strong></span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="radio" 
+                   formControlName="parcelType"
+                   value="livestock"
+                   (change)="onParcelTypeChange('livestock')"
+                   style="margin-right: 5px;">
+            <span>🐄 <strong>Livestock Operation</strong></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- CROP-SPECIFIC FIELDS -->
+      <div *ngIf="currentParcelType === 'crop'" style="border: 1px solid #e3f2fd; padding: 12px; border-radius: 4px; background: #f5f9ff; margin-bottom: 15px;">
+        <h4 style="margin-top: 0;">🌾 Crop Production Details</h4>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Current Crop *</label>
+            <select formControlName="currentCrop" class="form-control">
+              <option value="">Select Crop</option>
+              <option value="maize">Maize</option>
+              <option value="wheat">Wheat</option>
+              <option value="rice">Rice</option>
+              <option value="beans">Beans</option>
+              <option value="potatoes">Potatoes</option>
+              <option value="tomatoes">Tomatoes</option>
+              <option value="coffee">Coffee</option>
+              <option value="tea">Tea</option>
+              <option value="banana">Banana</option>
+              <option value="fallow">Fallow</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Crop Variety (Optional)</label>
+            <input type="text" 
+                   formControlName="cropVariety" 
+                   placeholder="e.g., Arabica"
+                   class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Planting Date</label>
+            <input type="date" formControlName="plantingDate" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label>Expected Harvest Date</label>
+            <input type="date" formControlName="expectedHarvestDate" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Farming Method</label>
+            <select formControlName="farmingMethod" class="form-control">
+              <option value="rain_fed">Rain-Fed</option>
+              <option value="irrigated">Irrigated</option>
+              <option value="greenhouse">Greenhouse</option>
+              <option value="organic">Organic</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Irrigation Type</label>
+            <select formControlName="irrigationType" class="form-control">
+              <option value="rain_fed">Rain-Fed</option>
+              <option value="drip">Drip</option>
+              <option value="flood">Flood</option>
+              <option value="sprinkler">Sprinkler</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVESTOCK-SPECIFIC FIELDS -->
+      <div *ngIf="currentParcelType === 'livestock'" style="border: 1px solid #fff3e0; padding: 12px; border-radius: 4px; background: #fffbf0; margin-bottom: 15px;">
+        <h4 style="margin-top: 0;">🐄 Livestock Operation Details</h4>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Livestock Type *</label>
+            <select formControlName="livestockType" class="form-control">
+              <option value="">Select Livestock</option>
+              <option value="dairy_cattle">🐄 Dairy Cattle</option>
+              <option value="beef_cattle">🐄 Beef Cattle</option>
+              <option value="dairy_goat">🐐 Dairy Goat</option>
+              <option value="layer_poultry">🐔 Layer Poultry</option>
+              <option value="broiler_poultry">🐔 Broiler Poultry</option>
+              <option value="fish">🐠 Fish (Tilapia)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Current Count</label>
+            <input type="number" 
+                   formControlName="livestockCount" 
+                   placeholder="Number of animals"
+                   min="1"
+                   class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Housing Type</label>
+            <select formControlName="housingType" class="form-control">
+              <option value="">Select Housing</option>
+              <option value="open">Open Grazing</option>
+              <option value="semi-open">Semi-Open Shelter</option>
+              <option value="closed">Closed Barn/House</option>
+              <option value="pond">Pond/Water Body</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Paddock/Unit Arrangement</label>
+            <input type="text" 
+                   formControlName="paddockArrangement" 
+                   placeholder="e.g., 4 paddocks with rotation"
+                   class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMON FIELD - Area (CRITICAL for farm size tracking) -->
+      <div class="form-group" style="background: #fff9e6; padding: 12px; border-radius: 4px; border-left: 3px solid #ff9800;">
+        <label><strong>Area Allocation (Hectares) *</strong></label>
+        <input type="number" 
+               formControlName="areaHectares" 
+               placeholder="0.00"
+               step="0.01"
+               min="0.01"
+               class="form-control"
+               style="font-weight: bold;">
+        <small style="color: #d84315;">⚠️ Max available: {{ remainingFarmAreaHectares | number:'1.2-2' }} ha</small>
+      </div>
+
+      <button (click)="addParcel()" 
+              [disabled]="parcelForm.invalid"
+              class="btn btn-primary">
+        <ion-icon name="add-circle"></ion-icon>
+        Add Parcel
+      </button>
+    </form>
+
+    <!-- Display Added Parcels/Units -->
+    <div *ngIf="parcels.length > 0" class="parcels-list">
+      <h3>Your Parcels/Units ({{ parcels.length }})</h3>
+      <div style="margin-bottom: 10px; padding: 10px; background: #e8f5e9; border-radius: 4px;">
+        <strong>✓ Total Allocated:</strong> {{ totalAllocatedAreaHectares | number:'1.2-2' }} ha / 
+        <strong>Remaining:</strong> {{ remainingFarmAreaHectares | number:'1.2-2' }} ha
+      </div>
+
+      <div *ngFor="let parcel of parcels; let i = index" class="parcel-card" [style.border-left]="(parcel.parcelType === 'crop' ? '4px solid #8bc34a' : '4px solid #ff9800')">
+        <div class="parcel-info">
+          <h4>{{ parcel.parcelName }}</h4>
+          
+          <!-- CROP PARCEL DISPLAY -->
+          <div *ngIf="parcel.parcelType === 'crop'">
+            <p><strong>🌾 Type:</strong> Crop Production</p>
+            <p><strong>Crop:</strong> {{ parcel.currentCrop }}</p>
+            <p *ngIf="parcel.cropVariety"><strong>Variety:</strong> {{ parcel.cropVariety }}</p>
+            <p><strong>Planting:</strong> {{ parcel.plantingDate | date:'medium' }}</p>
+            <p *ngIf="parcel.expectedHarvestDate"><strong>Harvest:</strong> {{ parcel.expectedHarvestDate | date:'medium' }}</p>
+            <p><strong>Method:</strong> {{ parcel.farmingMethod }}</p>
+          </div>
+
+          <!-- LIVESTOCK PARCEL DISPLAY -->
+          <div *ngIf="parcel.parcelType === 'livestock'">
+            <p><strong>🐄 Type:</strong> Livestock Operation</p>
+            <p><strong>Livestock:</strong> {{ parcel.livestockType }}</p>
+            <p><strong>Current Count:</strong> {{ parcel.livestockCount }} animals</p>
+            <p><strong>Housing:</strong> {{ parcel.housingType }}</p>
+            <p *ngIf="parcel.paddockArrangement"><strong>Arrangement:</strong> {{ parcel.paddockArrangement }}</p>
+          </div>
+
+          <!-- COMMON INFO -->
+          <p style="background: #fff9e6; padding: 8px; border-radius: 4px; margin: 10px 0;">
+            <strong>📍 Area:</strong> {{ parcel.areaHectares | number:'1.2-2' }} hectares
+          </p>
+        </div>
+        <button (click)="removeParcel(i)" class="btn btn-sm btn-danger">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Assign Workers -->
+  <div *ngIf="currentStep === 3" class="step-container" [@slideAnimation]>
+    <div class="step-header">
+      <h2>{{ steps[2].title }}</h2>
+      <p>{{ steps[2].description }}</p>
+    </div>
+
+    <div class="workers-section">
+      <!-- Loading State -->
+      <div *ngIf="isLoadingWorkers" class="loading-state">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Loading available workers...</p>
+      </div>
+
+      <!-- Workers List -->
+      <div *ngIf="!isLoadingWorkers && availableWorkers.length > 0" class="workers-list">
+        <p class="info-text">Select workers to assign to this farm (optional)</p>
+        
+        <div class="worker-selection-summary">
+          <p><strong>Selected Workers:</strong> {{ selectedWorkerIds.length }} / {{ availableWorkers.length }}</p>
+        </div>
+
+        <div *ngFor="let worker of availableWorkers" class="worker-card">
+          <div class="worker-checkbox">
+            <input type="checkbox"
+                   [checked]="isWorkerSelected(worker.id)"
+                   (change)="toggleWorkerSelection(worker.id)"
+                   [id]="'worker-' + worker.id"
+                   class="form-check-input">
+            <label [for]="'worker-' + worker.id" class="form-check-label"></label>
+          </div>
+
+          <div class="worker-info">
+            <h4>{{ worker.name || 'Worker' }}</h4>
+            <p *ngIf="worker.role"><strong>Role:</strong> {{ worker.role }}</p>
+            <p *ngIf="worker.phone"><strong>Phone:</strong> {{ worker.phone }}</p>
+            <p *ngIf="worker.specialization"><strong>Specialization:</strong> {{ worker.specialization }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Workers Available -->
+      <div *ngIf="!isLoadingWorkers && availableWorkers.length === 0" class="empty-state">
+        <ion-icon name="people"></ion-icon>
+        <p>No workers available to assign</p>
+        <small>You can add workers later from the farm management dashboard</small>
+      </div>
+
+      <!-- Worker Assignment Form -->
+      <form [formGroup]="workerAssignmentForm" *ngIf="!isLoadingWorkers" class="form-container">
+        <!-- Workers are optional - no required validator -->
+      </form>
+    </div>
+  </div>
+
+  <!-- Step 4: Review & Complete -->
+  <div *ngIf="currentStep === 4" class="step-container" [@slideAnimation]>
+    <div class="step-header">
+      <h2>{{ steps[3].title }}</h2>
+      <p>{{ steps[3].description }}</p>
+    </div>
+
+    <div class="review-section">
+      <!-- Farm Summary -->
+      <div class="review-card">
+        <h3>🌾 Farm Information</h3>
+        <ul>
+          <li><strong>Farm Name:</strong> {{ setupData.farmInfo.farmName }}</li>
+          <li><strong>Location:</strong> {{ setupData.farmInfo.location }}, {{ setupData.farmInfo.county }}</li>
+          <li *ngIf="setupData.farmInfo.subCounty"><strong>Sub-County:</strong> {{ setupData.farmInfo.subCounty }}</li>
+          <li><strong>Size:</strong> {{ setupData.farmInfo.farmSize }} {{ setupData.farmInfo.farmSizeUnit }}</li>
+          <li><strong>Farm Type:</strong> {{ setupData.farmInfo.farmType }}</li>
+          <li><strong>Primary Crop:</strong> {{ setupData.farmInfo.primaryCrop }}</li>
+          <li><strong>Farming Method:</strong> {{ setupData.farmInfo.farmingMethod }}</li>
+        </ul>
+      </div>
+
+      <!-- Parcels Summary -->
+      <div class="review-card">
+        <h3>🏘️ Parcels ({{ setupData.parcels.length }})</h3>
+        <div *ngFor="let parcel of setupData.parcels" class="parcel-summary">
+          <p><strong>{{ parcel.parcelName }}:</strong> {{ parcel.areaHectares }} ha - {{ parcel.currentCrop }}</p>
+        </div>
+      </div>
+
+      <!-- Assigned Workers Summary -->
+      <div class="review-card" *ngIf="selectedWorkerIds.length > 0">
+        <h3>👥 Assigned Workers ({{ selectedWorkerIds.length }})</h3>
+        <div *ngFor="let workerId of selectedWorkerIds" class="worker-summary">
+          <p>
+            <strong>{{ getWorkerName(workerId) }}</strong> - {{ getWorkerRole(workerId) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Terms & Conditions -->
+      <form [formGroup]="reviewForm" class="form-container">
+        <div class="form-group checkbox">
+          <input type="checkbox" 
+                 formControlName="agreedToTerms" 
+                 id="terms">
+          <label for="terms">
+            I agree to the <a href="#">Terms & Conditions</a> *
+          </label>
+        </div>
+
+        <div class="form-group checkbox">
+          <input type="checkbox" 
+                 formControlName="agreedToDataSharing" 
+                 id="datasharing">
+          <label for="datasharing">
+            I allow FarmIQ to share farm data for agricultural insights *
+          </label>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="wizard-navigation">
+    <button (click)="previousStep()" 
+            [disabled]="currentStep === 1"
+            class="btn btn-secondary">
+      <ion-icon name="chevron-back"></ion-icon>
+      Previous
+    </button>
+
+    <span class="step-counter">Step {{ currentStep }} of {{ totalSteps }}</span>
+
+    <button *ngIf="currentStep < totalSteps"
+            (click)="nextStep()" 
+            [disabled]="!canProceedToNext() || isLoading"
+            class="btn btn-primary">
+      Next
+      <ion-icon name="chevron-forward"></ion-icon>
+    </button>
+
+    <button *ngIf="currentStep === totalSteps"
+            (click)="finishSetup()" 
+            [disabled]="!canProceedToNext() || isLoading"
+            [class.loading]="isLoading"
+            class="btn btn-success btn-lg">
+      <span *ngIf="!isLoading">
+        <ion-icon name="checkmark-done"></ion-icon>
+        Complete Setup
+      </span>
+      <span *ngIf="isLoading">
+        <ion-spinner name="crescent"></ion-spinner>
+        Setting up farm...
+      </span>
+    </button>
+  </div>
+</div>

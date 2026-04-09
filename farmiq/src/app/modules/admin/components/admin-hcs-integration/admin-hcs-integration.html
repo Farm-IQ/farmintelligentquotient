@@ -1,0 +1,71 @@
+<div class="admin-hcs-integration">
+  <header class="hcs-header">
+    <h1>Hedera Consensus Service Integration</h1>
+    <button (click)="syncWithHedera()" [disabled]="syncing" class="btn-primary">{{ syncing ? 'Syncing...' : 'Sync Now' }}</button>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- HCS Status Cards -->
+  <div class="hcs-status-cards">
+    <div class="status-card">
+      <h3>Connection Status</h3>
+      <p class="status-value" [style.color]="getStatusColor(hcsIntegration.status)">{{ hcsIntegration.status | uppercase }}</p>
+      <p class="status-label">{{ hcsIntegration.networkStatus }}</p>
+    </div>
+    <div class="status-card">
+      <h3>Last Sync</h3>
+      <p class="status-value">{{ hcsIntegration.lastSync | date:'short' }}</p>
+      <p class="status-label">{{ hcsIntegration.syncFrequency }}</p>
+    </div>
+    <div class="status-card">
+      <h3>Transactions Processed</h3>
+      <p class="status-value">{{ hcsIntegration.transactionsProcessed | number }}</p>
+      <p class="status-label">{{ hcsIntegration.transactionsFailed }} failed</p>
+    </div>
+    <div class="status-card">
+      <h3>Avg Confirmation</h3>
+      <p class="status-value">{{ hcsIntegration.averageConfirmationTime }}</p>
+      <p class="status-label">Gas: {{ hcsIntegration.gasUsage | number }}</p>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="transactions-section">
+    <h2>Recent Hedera Transactions</h2>
+    <div class="transactions-list">
+      <div *ngFor="let txn of recentTransactions" class="transaction-item">
+        <div class="txn-header">
+          <p class="txn-hash">{{ txn.hash }}</p>
+          <span class="txn-status" [style.color]="getStatusColor(txn.status)">{{ txn.status }}</span>
+        </div>
+        <p class="txn-time">{{ txn.timestamp | date }}</p>
+        <p class="txn-amount">Amount: {{ txn.amount }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integration Details -->
+  <div class="integration-details-card">
+    <h2>Integration Configuration</h2>
+    <div class="details-grid">
+      <div class="detail-item">
+        <label>Network</label>
+        <p>{{ hcsIntegration.networkStatus }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Sync Frequency</label>
+        <p>{{ hcsIntegration.syncFrequency }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Success Rate</label>
+        <p>{{ ((hcsIntegration.transactionsProcessed / (hcsIntegration.transactionsProcessed + hcsIntegration.transactionsFailed)) * 100) | number:'1.1-1' }}%</p>
+      </div>
+    </div>
+  </div>
+</div>

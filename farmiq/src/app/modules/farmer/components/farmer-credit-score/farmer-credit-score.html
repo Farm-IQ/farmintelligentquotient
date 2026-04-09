@@ -1,0 +1,22 @@
+<div class="credit-dashboard">
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading credit score...</p>
+  </div>
+
+  <div *ngIf="!loading && !error" class="credit-content">
+    <section class="page-header">
+      <h1>Credit Score</h1>
+      <button class="btn-refresh" (click)="loadCreditScore()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </button>
+    </section>
+
+    <section class="score-display" *ngIf="creditScore">
+      <div class="score-card">
+        <div class="score-value">{{ creditScore.score }}/100</div>
+        <div class="score-label">{{ creditScore.rating }}</div>
+      </div>
+    </section>
+  </div>
+</div>

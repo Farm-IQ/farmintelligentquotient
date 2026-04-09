@@ -1,0 +1,708 @@
+<!-- ============================================================================
+     CONSOLIDATED FARMER ANALYTICS DASHBOARD
+     Manages farms, operations, livestock, inventory, and finances
+     ============================================================================ -->
+
+<div class="farmer-analytics-dashboard">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading farm data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-banner">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <div class="error-content">
+      <h3>Error Loading Data</h3>
+      <p>{{ error }}</p>
+      <p *ngIf="errorDetails" class="error-details">{{ errorDetails }}</p>
+      <div class="error-actions">
+        <button class="btn-retry" (click)="retryLoadAllData()">
+          <ion-icon name="refresh-outline"></ion-icon> Retry
+        </button>
+        <button class="btn-dismiss" (click)="clearError()">
+          <ion-icon name="close-outline"></ion-icon> Dismiss
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error" class="dashboard-content">
+    <!-- Page Header with Farm Selector -->
+    <section class="page-header">
+      <div class="header-left">
+        <h1>🌾 Farm Dashboard</h1>
+        
+        <!-- Farm Selector Dropdown -->
+        <div class="farm-selector" *ngIf="farms.length > 0">
+          <select [(ngModel)]="currentFarm" (change)="selectFarm(currentFarm!)" class="farm-dropdown">
+            <option *ngFor="let farm of farms" [ngValue]="farm">
+              {{ farm.name }} ({{ farm.size_acres | number:'1.0-0' }} ac)
+            </option>
+          </select>
+          <button class="btn-add-farm" (click)="showCreateFarmModal = true" 
+            title="Add a new farm">
+            <ion-icon name="add-circle-outline"></ion-icon> Add Farm
+          </button>
+        </div>
+
+        <!-- No Farms State -->
+        <div *ngIf="farms.length === 0" class="no-farms">
+          <p>No farms found. Create your first farm to get started.</p>
+          <button class="btn-primary" (click)="showCreateFarmModal = true">
+            <ion-icon name="add-outline"></ion-icon> Create Farm
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-refresh" (click)="refreshAllData()" title="Refresh data">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </button>
+    </section>
+
+    <!-- Quick Stats Cards -->
+    <section class="stats-row" *ngIf="currentFarm">
+      <div class="stat-card">
+        <div class="stat-icon">🌾</div>
+        <div class="stat-info">
+          <span class="stat-label">Farm Size</span>
+          <span class="stat-value">{{ (currentFarm.size_acres / 2.47105) | number:'1.1-2' }} ha</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🌱</div>
+        <div class="stat-info">
+          <span class="stat-label">Active Operations</span>
+          <span class="stat-value">{{ operations.length }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🐄</div>
+        <div class="stat-info">
+          <span class="stat-label">Livestock Units</span>
+          <span class="stat-value">{{ livestockUnits.length }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+          <span class="stat-label">Inventory Items</span>
+          <span class="stat-value">{{ inventoryItems.length }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <span class="stat-label">Gross Profit</span>
+          <span class="stat-value">KSh {{ (financialSummary.grossProfit | number:'1.0-0') }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <section class="dashboard-tabs" *ngIf="currentFarm">
+      <button class="tab" [class.active]="activeMenu === 'farm-overview'" 
+        (click)="setActiveMenu('farm-overview')">
+        📊 Farm Overview
+      </button>
+      <button class="tab" [class.active]="activeMenu === 'operations'" 
+        (click)="setActiveMenu('operations')">
+        🌱 Operations
+      </button>
+      <button class="tab" [class.active]="activeMenu === 'livestock'" 
+        (click)="setActiveMenu('livestock')">
+        🐄 Livestock
+      </button>
+      <button class="tab" [class.active]="activeMenu === 'inventory'" 
+        (click)="setActiveMenu('inventory')">
+        📦 Inventory
+      </button>
+      <button class="tab" [class.active]="activeMenu === 'financial'" 
+        (click)="setActiveMenu('financial')">
+        💰 Financial
+      </button>
+    </section>
+
+    <!-- ================================================================
+         FARM OVERVIEW TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeMenu === 'farm-overview' && currentFarm">
+      <div class="section-header">
+        <h2>Farm Overview</h2>
+      </div>
+
+      <!-- Farm Map -->
+      <div class="map-section">
+        <button class="btn-toggle-map" (click)="toggleMap()" 
+          [title]="showMap ? 'Hide map' : 'Show map'">
+          <ion-icon [name]="showMap ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+          {{ showMap ? 'Hide' : 'Show' }} Map
+        </button>
+        
+        <div *ngIf="showMap" class="map-container" id="analytics-map-container" 
+          #mapContainer></div>
+        
+        <div *ngIf="!mapReady && showMap" class="map-loading">
+          <div class="loading-spinner"></div>
+          <p>Initializing map...</p>
+        </div>
+      </div>
+
+      <!-- Analytics Loading State -->
+      <div *ngIf="loadingAnalytics" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading analytics...</p>
+      </div>
+
+      <!-- Analytics Error State -->
+      <div *ngIf="analyticsError && !loadingAnalytics" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ analyticsError }}</p>
+      </div>
+
+      <!-- Farm Analytics -->
+      <div *ngIf="!loadingAnalytics && analytics" class="analytics-grid">
+        <div class="analytics-card">
+          <h3>Yield Growth</h3>
+          <div class="metric-large">{{ yieldGrowth.toFixed(1) }}%</div>
+          <span class="metric-unit">vs last season</span>
+        </div>
+        <div class="analytics-card">
+          <h3>Soil Health</h3>
+          <div class="gauge">
+            <div class="gauge-fill" [style.width.%]="getSoilHealthPercentage()"></div>
+          </div>
+          <span class="metric-unit">{{ getSoilHealthPercentage() }}% healthy</span>
+        </div>
+        <div class="analytics-card">
+          <h3>Weather Impact</h3>
+          <div class="metric-large" [ngClass]="getWeatherImpactClass()">
+            {{ analytics.weatherImpact }}%
+          </div>
+          <span class="metric-unit">favorable conditions</span>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="recommendations" *ngIf="recommendations.length > 0">
+        <h3>📊 AI Recommendations</h3>
+        <div class="recommendation-list">
+          <div *ngFor="let rec of recommendations" class="recommendation-item">
+            <div class="rec-icon">💡</div>
+            <div class="rec-content">
+              <h4>{{ rec.title }}</h4>
+              <p>{{ rec.description }}</p>
+              <small class="impact">Impact: {{ rec.impact }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         OPERATIONS MANAGEMENT TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeMenu === 'operations' && currentFarm">
+      <div class="section-header">
+        <h2>Farm Operations</h2>
+        <button class="btn-add" (click)="showCreateOperationModal = true">
+          <ion-icon name="add-outline"></ion-icon> Add Operation
+        </button>
+      </div>
+
+      <!-- Operations Loading State -->
+      <div *ngIf="loadingOperations" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading operations...</p>
+      </div>
+
+      <!-- Operations Error State -->
+      <div *ngIf="operationsError && !loadingOperations" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ operationsError }}</p>
+      </div>
+
+      <!-- Operations List -->
+      <div *ngIf="!loadingOperations" class="operations-grid">
+        <div *ngIf="operations.length === 0" class="empty-state">
+          <p>No operations yet. Create your first operation to track crops or activities.</p>
+        </div>
+
+        <div *ngFor="let op of operations" class="operation-card">
+          <div class="card-header">
+            <h3>{{ op.operationName }}</h3>
+            <span class="status-badge" [ngClass]="'status-' + op.status">
+              {{ op.status | uppercase }}
+            </span>
+          </div>
+          <div class="card-body">
+            <p><strong>Type:</strong> {{ op.operationType }}</p>
+            <p><strong>Commodity:</strong> {{ op.primaryCommodity }}</p>
+            <p><strong>Budget:</strong> KSh {{ (op.allocatedBudget | number:'1.0-0') }}</p>
+            <p><strong>Land:</strong> {{ op.allocatedLandHectares }} ha</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-edit" title="Edit operation">
+              <ion-icon name="pencil-outline"></ion-icon>
+            </button>
+            <button class="btn-delete" (click)="deleteOperation(op)" title="Delete operation">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Operation Modal -->
+      <div class="modal" *ngIf="showCreateOperationModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add New Operation</h2>
+            <button class="btn-close" (click)="showCreateOperationModal = false">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <form [formGroup]="createOperationForm" (ngSubmit)="createOperation()" class="modal-body">
+            <div class="form-group">
+              <label>Operation Name</label>
+              <input type="text" formControlName="operationName" class="form-input" 
+                placeholder="e.g., Coffee Plot A">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Operation Type</label>
+                <select formControlName="operationType" class="form-input">
+                  <option value="crop_production">Crop Production</option>
+                  <option value="livestock_rearing">Livestock Rearing</option>
+                  <option value="specialty_crop">Specialty Crop</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Primary Commodity</label>
+                <select formControlName="primaryCommodity" class="form-input">
+                  <option value="maize">Maize</option>
+                  <option value="coffee">Coffee</option>
+                  <option value="tea">Tea</option>
+                  <option value="dairy">Dairy</option>
+                  <option value="beef">Beef</option>
+                  <option value="poultry">Poultry</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Allocated Budget (KSh)</label>
+              <input type="number" formControlName="allocatedBudget" class="form-input" 
+                placeholder="0">
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="showCreateOperationModal = false">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit" [disabled]="createOperationForm.invalid">
+                Create Operation
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         LIVESTOCK MANAGEMENT TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeMenu === 'livestock' && currentFarm">
+      <div class="section-header">
+        <h2>Livestock Management</h2>
+        <button class="btn-add" (click)="showAddLivestockModal = true">
+          <ion-icon name="add-outline"></ion-icon> Add Livestock Unit
+        </button>
+      </div>
+
+      <!-- Livestock Loading State -->
+      <div *ngIf="loadingLivestock" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading livestock units...</p>
+      </div>
+
+      <!-- Livestock Error State -->
+      <div *ngIf="livestockError && !loadingLivestock" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ livestockError }}</p>
+      </div>
+
+      <!-- Livestock Units Grid -->
+      <div *ngIf="!loadingLivestock" class="livestock-grid">
+        <div *ngIf="livestockUnits.length === 0" class="empty-state">
+          <p>No livestock units yet. Add your first livestock unit to start tracking.</p>
+        </div>
+
+        <div *ngFor="let unit of livestockUnits" class="livestock-card">
+          <div class="card-header">
+            <h3>{{ unit.unitName }}</h3>
+            <span class="status-badge" [ngClass]="'status-' + unit.status">
+              {{ unit.status | uppercase }}
+            </span>
+          </div>
+          <div class="card-body">
+            <p><strong>Type:</strong> {{ unit.livestockType?.name || '—' }}</p>
+            <p><strong>Current Count:</strong> {{ unit.currentCount }}</p>
+            <p><strong>Capacity:</strong> {{ unit.capacityCount }}</p>
+            <p><strong>Housing:</strong> {{ unit.housingType }}</p>
+            <div class="capacity-bar">
+              <div class="capacity-fill" [style.width.%]="(unit.currentCount / unit.capacityCount) * 100"></div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-edit" title="Edit unit">
+              <ion-icon name="pencil-outline"></ion-icon>
+            </button>
+            <button class="btn-delete" (click)="deleteLivestockUnit(unit)" title="Delete unit">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Livestock Modal -->
+      <div class="modal" *ngIf="showAddLivestockModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add Livestock Unit</h2>
+            <button class="btn-close" (click)="showAddLivestockModal = false">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <form [formGroup]="addLivestockForm" (ngSubmit)="addLivestockUnit()" class="modal-body">
+            <div class="form-group">
+              <label>Unit Name</label>
+              <input type="text" formControlName="unitName" class="form-input" 
+                placeholder="e.g., Dairy Unit A">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Livestock Type</label>
+                <select formControlName="livestockTypeId" class="form-input">
+                  <option value="">Select type</option>
+                  <option value="dairy_cattle">Dairy Cattle</option>
+                  <option value="beef_cattle">Beef Cattle</option>
+                  <option value="poultry_layers">Poultry (Layers)</option>
+                  <option value="poultry_broilers">Poultry (Broilers)</option>
+                  <option value="goats">Goats</option>
+                  <option value="sheep">Sheep</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Housing Type</label>
+                <select formControlName="housingType" class="form-input">
+                  <option value="open">Open</option>
+                  <option value="semi-open">Semi-Open</option>
+                  <option value="closed">Closed</option>
+                  <option value="pond">Pond</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Current Count</label>
+                <input type="number" formControlName="currentCount" class="form-input" 
+                  placeholder="0" min="1">
+              </div>
+
+              <div class="form-group">
+                <label>Capacity</label>
+                <input type="number" formControlName="capacityCount" class="form-input" 
+                  placeholder="0" min="1">
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="showAddLivestockModal = false">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit" [disabled]="addLivestockForm.invalid">
+                Add Livestock Unit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         INVENTORY MANAGEMENT TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeMenu === 'inventory' && currentFarm">
+      <div class="section-header">
+        <h2>Inventory Management</h2>
+        <button class="btn-add" (click)="showAddInventoryModal = true">
+          <ion-icon name="add-outline"></ion-icon> Add Item
+        </button>
+      </div>
+
+      <!-- Inventory Loading State -->
+      <div *ngIf="loadingInventory" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading inventory items...</p>
+      </div>
+
+      <!-- Inventory Error State -->
+      <div *ngIf="inventoryError && !loadingInventory" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ inventoryError }}</p>
+      </div>
+
+      <!-- Low Stock Alerts -->
+      <div *ngIf="!loadingInventory && checkLowStockItems().length > 0" class="alerts-section">
+        <h3>⚠️ Low Stock Items</h3>
+        <div class="alert-list">
+          <div *ngFor="let item of checkLowStockItems()" class="alert-item">
+            <ion-icon name="warning-outline" class="warning-icon"></ion-icon>
+            <span>{{ item.itemName }} - Only {{ item.currentQuantity }} {{ item.unit }} left 
+              (Reorder: {{ item.reorderLevel }})</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Items Grid -->
+      <div *ngIf="!loadingInventory" class="inventory-grid">
+        <div *ngIf="inventoryItems.length === 0" class="empty-state">
+          <p>No inventory items yet. Add your first inventory item to start tracking stock.</p>
+        </div>
+
+        <div *ngFor="let item of inventoryItems" class="inventory-card">
+          <div class="card-header">
+            <h3>{{ item.itemName }}</h3>
+            <span class="status-badge" [ngClass]="'status-' + (item.status || 'in-stock')">
+              {{ item.status | uppercase }}
+            </span>
+          </div>
+          <div class="card-body">
+            <p><strong>Category:</strong> {{ item.categoryId || '—' }}</p>
+            <p><strong>Current Stock:</strong> {{ item.currentQuantity }} {{ item.unit }}</p>
+            <p><strong>Reorder Level:</strong> {{ item.reorderLevel }} {{ item.unit }}</p>
+            <p *ngIf="item.supplierName"><strong>Supplier:</strong> {{ item.supplierName }}</p>
+            <p *ngIf="item.unitCost"><strong>Unit Cost:</strong> KSh {{ item.unitCost }}</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-edit" title="Edit item">
+              <ion-icon name="pencil-outline"></ion-icon>
+            </button>
+            <button class="btn-delete" (click)="deleteInventoryItem(item)" title="Delete item">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Inventory Modal -->
+      <div class="modal" *ngIf="showAddInventoryModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add Inventory Item</h2>
+            <button class="btn-close" (click)="showAddInventoryModal = false">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+
+          <form [formGroup]="addInventoryForm" (ngSubmit)="addInventoryItem()" class="modal-body">
+            <div class="form-group">
+              <label>Item Name</label>
+              <input type="text" formControlName="itemName" class="form-input" 
+                placeholder="e.g., Urea Fertilizer">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Category</label>
+                <select formControlName="categoryId" class="form-input">
+                  <option value="">Select category</option>
+                  <option value="feed">Animal Feed</option>
+                  <option value="seeds">Seeds</option>
+                  <option value="fertilizer">Fertilizer</option>
+                  <option value="pesticide">Pesticide</option>
+                  <option value="equipment">Equipment</option>
+                  <option value="medicine">Medicine</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Unit</label>
+                <select formControlName="unit" class="form-input">
+                  <option value="kg">kg</option>
+                  <option value="liters">liters</option>
+                  <option value="pieces">pieces</option>
+                  <option value="bags">bags</option>
+                  <option value="boxes">boxes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Current Quantity</label>
+                <input type="number" formControlName="currentQuantity" class="form-input" 
+                  placeholder="0" min="0">
+              </div>
+
+              <div class="form-group">
+                <label>Reorder Level</label>
+                <input type="number" formControlName="reorderLevel" class="form-input" 
+                  placeholder="5" min="0">
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="showAddInventoryModal = false">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit" [disabled]="addInventoryForm.invalid">
+                Add Item
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         FINANCIAL DASHBOARD TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeMenu === 'financial' && currentFarm">
+      <div class="section-header">
+        <h2>Financial Dashboard</h2>
+      </div>
+
+      <!-- Finances Loading State -->
+      <div *ngIf="loadingFinances" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading financial data...</p>
+      </div>
+
+      <!-- Finances Error State -->
+      <div *ngIf="financesError && !loadingFinances" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ financesError }}</p>
+      </div>
+
+      <!-- Financial Summary Cards -->
+      <div *ngIf="!loadingFinances" class="financial-summary">
+        <div class="finance-card totals">
+          <h3>Total Costs</h3>
+          <div class="amount">KSh {{ (financialSummary.totalCosts | number:'1.0-0') }}</div>
+        </div>
+        <div class="finance-card totals">
+          <h3>Total Revenue</h3>
+          <div class="amount success">KSh {{ (financialSummary.totalRevenue | number:'1.0-0') }}</div>
+        </div>
+        <div class="finance-card">
+          <h3>Gross Profit</h3>
+          <div class="amount" [class.positive]="financialSummary.grossProfit > 0"
+            [class.negative]="financialSummary.grossProfit < 0">
+            KSh {{ (financialSummary.grossProfit | number:'1.0-0') }}
+          </div>
+        </div>
+        <div class="finance-card">
+          <h3>ROI</h3>
+          <div class="amount" [class.positive]="financialSummary.roiPercentage > 0"
+            [class.negative]="financialSummary.roiPercentage < 0">
+            {{ (financialSummary.roiPercentage.toFixed(1)) }}%
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations Budget Breakdown -->
+      <div *ngIf="!loadingFinances" class="budget-section">
+        <h3>Operations Budget vs Actual</h3>
+        <div class="budget-list">
+          <div *ngIf="operations.length === 0" class="empty-state">
+            <p>No operations to display financial data.</p>
+          </div>
+          <div *ngFor="let op of operations" class="budget-item">
+            <div class="budget-header">
+              <span>{{ op.operationName }}</span>
+              <span class="budget-amount">KSh {{ (op.allocatedBudget | number:'1.0-0') }}</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 65%"></div>
+            </div>
+            <small>65% spent (Projected)</small>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Create Farm Modal (Global Modal - Outside all tabs) -->
+  <div class="modal" *ngIf="showCreateFarmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create New Farm</h2>
+        <button class="btn-close" (click)="showCreateFarmModal = false">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <form [formGroup]="createFarmForm" (ngSubmit)="createFarm()" class="modal-body">
+        <div class="form-group">
+          <label>Farm Name</label>
+          <input type="text" formControlName="farm_name" class="form-input" 
+            placeholder="e.g., Green Valley Farm">
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" formControlName="location" class="form-input" 
+            placeholder="e.g., Kiambu County">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Size (Hectares)</label>
+            <input type="number" formControlName="area_hectares" class="form-input" 
+              placeholder="0" min="0.1" step="0.1">
+          </div>
+
+          <div class="form-group">
+            <label>Farming Method</label>
+            <select formControlName="farming_method" class="form-input">
+              <option value="organic">Organic</option>
+              <option value="conventional">Conventional</option>
+              <option value="mixed">Mixed</option>
+              <option value="intensive">Intensive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Primary Crop (Optional)</label>
+          <select formControlName="primary_crop" class="form-input">
+            <option value="">Select crop</option>
+            <option value="maize">Maize</option>
+            <option value="coffee">Coffee</option>
+            <option value="tea">Tea</option>
+            <option value="dairy">Dairy</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="showCreateFarmModal = false">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="createFarmForm.invalid">
+            Create Farm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

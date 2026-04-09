@@ -1,0 +1,225 @@
+<div class="oauth-role-selection-overlay" *ngIf="isVisible" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- STEP 1: Role Selection -->
+    <ng-container *ngIf="currentStep === 'role-selection'">
+      <div class="modal-header">
+        <h2>Select Your Role</h2>
+        <p class="provider-info">
+          Welcome {{ userEmail }}! You've signed in with {{ provider === 'google' ? '🔵 Google' : '⚫ GitHub' }}.
+        </p>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        <span>⚠️ {{ error }}</span>
+      </div>
+
+      <!-- Role Selection Grid -->
+      <div class="roles-grid">
+        <button
+          *ngFor="let roleOption of roleOptions"
+          class="role-card"
+          [class.selected]="isRoleSelected(roleOption.role)"
+          [disabled]="isLoading"
+          (click)="selectRole(roleOption.role)"
+          type="button"
+        >
+          <div class="role-icon">{{ roleOption.icon }}</div>
+          <div class="role-label">{{ roleOption.label }}</div>
+          <div class="role-description">{{ roleOption.description }}</div>
+          <div class="checkmark" *ngIf="isRoleSelected(roleOption.role)">✓</div>
+        </button>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="closeModal()"
+          [disabled]="isLoading"
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary"
+          (click)="selectRole(selectedRole!)"
+          [disabled]="!selectedRole || isLoading"
+          type="button"
+        >
+          <span *ngIf="!isLoading">Continue with {{ selectedRole ? getRoleLabel(selectedRole) : 'Selected Role' }}</span>
+          <span *ngIf="isLoading">
+            <span class="spinner"></span>
+            Loading...
+          </span>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- STEP 2: Form Completion -->
+    <ng-container *ngIf="currentStep === 'form-completion' && selectedRole">
+      <div class="modal-header">
+        <button class="back-button" (click)="goBack()" type="button">← Back</button>
+        <h2>Complete Your {{ getRoleLabel(selectedRole) }} Profile</h2>
+        <p class="provider-info">Fill in the information below to set up your account</p>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        <span>⚠️ {{ error }}</span>
+      </div>
+
+      <form [formGroup]="roleForm" class="role-form-container">
+        
+        <!-- FARMER FORM -->
+        <ng-container *ngIf="selectedRole === 'farmer'">
+          <div class="form-section" [formGroupName]="'farmerFields'">
+            <div class="form-group">
+              <label for="county">County</label>
+              <select id="county" formControlName="county">
+                <option value="">Select County</option>
+                <option *ngFor="let county of kenyanCounties" [value]="county">{{ county }}</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="farmSize">Farm Size</label>
+                <input id="farmSize" type="number" formControlName="farmSize" placeholder="e.g. 2.5" />
+              </div>
+              <div class="form-group">
+                <label for="farmSizeUnit">Unit</label>
+                <select id="farmSizeUnit" formControlName="farmSizeUnit">
+                  <option value="hectares">Hectares</option>
+                  <option value="acres">Acres</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- COOPERATIVE FORM -->
+        <ng-container *ngIf="selectedRole === 'cooperative'">
+          <div class="form-section" [formGroupName]="'cooperativeFields'">
+            <div class="form-group">
+              <label for="cooperativeName">Cooperative Name</label>
+              <input id="cooperativeName" type="text" formControlName="cooperativeName" placeholder="e.g. Farmers United Coop" />
+            </div>
+
+            <div class="form-group">
+              <label for="registrationNumber">Registration Number</label>
+              <input id="registrationNumber" type="text" formControlName="registrationNumber" placeholder="e.g. COOP/2021/001" />
+            </div>
+
+            <div class="form-group">
+              <label for="memberCount">Number of Members</label>
+              <input id="memberCount" type="number" formControlName="memberCount" placeholder="e.g. 150" />
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- AGENT FORM -->
+        <ng-container *ngIf="selectedRole === 'agent'">
+          <div class="form-section" [formGroupName]="'agentFields'">
+            <div class="form-group">
+              <label for="agentCounty">County</label>
+              <select id="agentCounty" formControlName="county">
+                <option value="">Select County</option>
+                <option *ngFor="let county of kenyanCounties" [value]="county">{{ county }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="specialization">Specialization</label>
+              <input id="specialization" type="text" formControlName="specialization" placeholder="e.g. Crop production, Soil health" />
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- VENDOR FORM -->
+        <ng-container *ngIf="selectedRole === 'vendor'">
+          <div class="form-section" [formGroupName]="'vendorFields'">
+            <div class="form-group">
+              <label for="businessName">Business Name</label>
+              <input id="businessName" type="text" formControlName="businessName" placeholder="e.g. Green Farm Supplies" />
+            </div>
+
+            <div class="form-group">
+              <label for="vendorType">Type of Vendor</label>
+              <select id="vendorType" formControlName="vendorType">
+                <option value="">Select Vendor Type</option>
+                <option value="seeds">Seeds & Seedlings</option>
+                <option value="fertilizers">Fertilizers</option>
+                <option value="tools">Farm Tools & Equipment</option>
+                <option value="pesticides">Pesticides & Chemicals</option>
+                <option value="mixed">Mixed Inputs</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="vendorCounty">County</label>
+              <select id="vendorCounty" formControlName="county">
+                <option value="">Select County</option>
+                <option *ngFor="let county of kenyanCounties" [value]="county">{{ county }}</option>
+              </select>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- LENDER FORM -->
+        <ng-container *ngIf="selectedRole === 'lender'">
+          <div class="form-section" [formGroupName]="'lenderFields'">
+            <div class="form-group">
+              <label for="institutionName">Institution Name</label>
+              <input id="institutionName" type="text" formControlName="institutionName" placeholder="e.g. Microfinance Co." />
+            </div>
+
+            <div class="form-group">
+              <label for="lenderType">Type of Lender</label>
+              <select id="lenderType" formControlName="lenderType">
+                <option value="">Select Lender Type</option>
+                <option value="bank">Bank</option>
+                <option value="microfinance">Microfinance Institution</option>
+                <option value="sacco">SACCO</option>
+                <option value="ngo">NGO/Donor</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cbkCode">CBK Code (if applicable)</label>
+              <input id="cbkCode" type="text" formControlName="cbkCode" placeholder="e.g. LDR001" />
+            </div>
+          </div>
+        </ng-container>
+
+      </form>
+
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          (click)="goBack()"
+          [disabled]="isLoading"
+          type="button"
+        >
+          Back
+        </button>
+        <button
+          class="btn btn-primary"
+          (click)="submitForm()"
+          [disabled]="!getCurrentRoleFormGroup()?.valid || isLoading"
+          type="button"
+        >
+          <span *ngIf="!isLoading">Complete Setup</span>
+          <span *ngIf="isLoading">
+            <span class="spinner"></span>
+            Setting up account...
+          </span>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="isLoading && currentStep === 'form-completion'">
+      <div class="spinner"></div>
+      <p>Setting up your account...</p>
+    </div>
+  </div>
+</div>

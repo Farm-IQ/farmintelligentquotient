@@ -1,0 +1,380 @@
+<!-- ============================================================================
+     WORKER DASHBOARD - Task Management & Performance Metrics
+     ============================================================================ -->
+
+<div class="worker-dashboard">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading your dashboard...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-banner">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <div class="error-content">
+      <h3>Error Loading Dashboard</h3>
+      <p>{{ error }}</p>
+      <p *ngIf="errorDetails" class="error-details">{{ errorDetails }}</p>
+      <div class="error-actions">
+        <button class="btn-retry" (click)="retryLoadAllData()">
+          <ion-icon name="refresh-outline"></ion-icon> Retry
+        </button>
+        <button class="btn-dismiss" (click)="clearError()">
+          <ion-icon name="close-outline"></ion-icon> Dismiss
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error" class="dashboard-content">
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="header-left">
+        <h1>👨‍🌾 My Dashboard</h1>
+        <p>Track your tasks, performance, and attendance</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-record-attendance" (click)="showRecordAttendanceModal = true">
+          <ion-icon name="add-outline"></ion-icon> Record Attendance
+        </button>
+      </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">✓</div>
+        <div class="stat-info">
+          <span class="stat-label">Tasks Completed</span>
+          <span class="stat-value">{{ taskStats.completed }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <span class="stat-label">In Progress</span>
+          <span class="stat-value">{{ taskStats.inProgress }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-info">
+          <span class="stat-label">Pending Tasks</span>
+          <span class="stat-value">{{ taskStats.pending }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-info">
+          <span class="stat-label">Completion Rate</span>
+          <span class="stat-value">{{ taskStats.completionRate | number:'1.0-0' }}%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <section class="dashboard-tabs">
+      <button class="tab" [class.active]="activeTab === 'tasks'" (click)="setActiveTab('tasks')">
+        📋 My Tasks
+      </button>
+      <button class="tab" [class.active]="activeTab === 'performance'" (click)="setActiveTab('performance')">
+        ⭐ Performance
+      </button>
+      <button class="tab" [class.active]="activeTab === 'attendance'" (click)="setActiveTab('attendance')">
+        📅 Attendance
+      </button>
+    </section>
+
+    <!-- ================================================================
+         TASKS TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeTab === 'tasks'">
+      <!-- Tasks Loading State -->
+      <div *ngIf="loadingTasks" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading tasks...</p>
+      </div>
+
+      <!-- Tasks Error State -->
+      <div *ngIf="tasksError && !loadingTasks" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ tasksError }}</p>
+      </div>
+
+      <!-- In Progress Tasks -->
+      <div *ngIf="!loadingTasks && getInProgressTasks().length > 0" class="tasks-section">
+        <h2>🔨 In Progress Tasks</h2>
+        <div class="tasks-list">
+          <div *ngFor="let task of getInProgressTasks()" class="task-card in-progress">
+            <div class="task-header">
+              <h3>{{ task.task_name }}</h3>
+              <span class="task-priority" [ngClass]="'priority-' + task.priority">
+                {{ task.priority | uppercase }}
+              </span>
+            </div>
+            <div class="task-body">
+              <p><strong>Type:</strong> {{ formatTaskType(task.task_type) }}</p>
+              <p><strong>Due:</strong> {{ task.due_date | date:'MMM d, y' }}</p>
+              <p *ngIf="task.estimated_hours"><strong>Est. Hours:</strong> {{ task.estimated_hours }}h</p>
+              <p *ngIf="task.notes" class="task-notes">{{ task.notes }}</p>
+            </div>
+            <div class="task-actions">
+              <button class="btn-complete" (click)="completeTask(task)">
+                <ion-icon name="checkmark-circle-outline"></ion-icon> Complete
+              </button>
+              <button class="btn-edit">
+                <ion-icon name="pencil-outline"></ion-icon> Edit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Tasks -->
+      <div class="tasks-section" *ngIf="getAllPendingTasks().length > 0">
+        <h2>📝 Pending Tasks</h2>
+        <div class="tasks-list">
+          <div *ngFor="let task of getAllPendingTasks()" class="task-card pending">
+            <div class="task-header">
+              <h3>{{ task.task_name }}</h3>
+              <span class="task-priority" [ngClass]="'priority-' + task.priority">
+                {{ task.priority | uppercase }}
+              </span>
+            </div>
+            <div class="task-body">
+              <p><strong>Type:</strong> {{ formatTaskType(task.task_type) }}</p>
+              <p><strong>Assigned:</strong> {{ task.assigned_date | date:'MMM d, y' }}</p>
+              <p><strong>Due:</strong> {{ task.due_date | date:'MMM d, y' }}</p>
+              <p *ngIf="task.estimated_hours"><strong>Est. Hours:</strong> {{ task.estimated_hours }}h</p>
+              <p *ngIf="task.notes" class="task-notes">{{ task.notes }}</p>
+            </div>
+            <div class="task-actions">
+              <button class="btn-start">
+                <ion-icon name="play-circle-outline"></ion-icon> Start Task
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Tasks -->
+      <div class="tasks-section" *ngIf="completedTasks.length > 0">
+        <h2>✅ Completed Tasks</h2>
+        <div class="tasks-list">
+          <div *ngFor="let task of completedTasks" class="task-card completed">
+            <div class="task-header">
+              <h3>{{ task.task_name }}</h3>
+              <span class="task-status completed">COMPLETED</span>
+            </div>
+            <div class="task-body">
+              <p><strong>Type:</strong> {{ formatTaskType(task.task_type) }}</p>
+              <p><strong>Completed:</strong> {{ task.completion_date | date:'MMM d, y' }}</p>
+              <p *ngIf="task.actual_hours"><strong>Actual Hours:</strong> {{ task.actual_hours }}h</p>
+              <p *ngIf="task.quality_rating" class="quality-rating">
+                <strong>Quality:</strong> 
+                <span class="stars">
+                  <ion-icon *ngFor="let star of getRatingStars(task.quality_rating)" 
+                    name="star" class="star-full"></ion-icon>
+                  {{ task.quality_rating }}/5
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Tasks -->
+      <div class="empty-state" *ngIf="assignedTasks.length === 0 && completedTasks.length === 0">
+        <p>No tasks assigned yet. Check back soon!</p>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         PERFORMANCE TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeTab === 'performance'">
+      <!-- Performance Loading State -->
+      <div *ngIf="loadingPerformance" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading performance metrics...</p>
+      </div>
+
+      <!-- Performance Error State -->
+      <div *ngIf="performanceError && !loadingPerformance" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ performanceError }}</p>
+      </div>
+
+      <!-- Performance Metrics Cards -->
+      <div *ngIf="!loadingPerformance && performanceMetrics" class="performance-grid">
+        <div class="performance-card">
+          <h3>Quality Rating</h3>
+          <div class="metric-large">{{ performanceStats.avgQualityRating.toFixed(1) }}/5</div>
+          <div class="stars">
+            <ion-icon *ngFor="let star of getRatingStars(performanceStats.avgQualityRating)" 
+              name="star" class="star-full"></ion-icon>
+            <ion-icon *ngFor="let empty of getRatingStars(5 - performanceStats.avgQualityRating)" 
+              name="star-outline" class="star-empty"></ion-icon>
+          </div>
+        </div>
+
+        <div class="performance-card">
+          <h3>Reliability Score</h3>
+          <div class="metric-large">{{ performanceStats.avgReliabilityScore.toFixed(1) }}/5</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" [style.width.%]="(performanceStats.avgReliabilityScore / 5) * 100"></div>
+          </div>
+        </div>
+
+        <div class="performance-card">
+          <h3>Skill Rating</h3>
+          <div class="metric-large">{{ performanceStats.avgSkillRating.toFixed(1) }}/5</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" [style.width.%]="(performanceStats.avgSkillRating / 5) * 100"></div>
+          </div>
+        </div>
+
+        <div class="performance-card">
+          <h3>Attendance Rate</h3>
+          <div class="metric-large">{{ performanceStats.attendanceRate }}%</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" [style.width.%]="performanceStats.attendanceRate"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Period Summary -->
+      <div class="performance-summary" *ngIf="performanceMetrics">
+        <div class="summary-item">
+          <span class="label">Period:</span>
+          <span class="value">
+            {{ performanceMetrics.period_start | date:'MMM d' }} - 
+            {{ performanceMetrics.period_end | date:'MMM d, y' }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Tasks Completed This Period:</span>
+          <span class="value highlight">{{ performanceMetrics.tasks_completed }}</span>
+        </div>
+        <div class="summary-item" *ngIf="performanceMetrics.performance_notes">
+          <span class="label">Feedback:</span>
+          <span class="value">{{ performanceMetrics.performance_notes }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         ATTENDANCE TAB
+         ================================================================ -->
+    <section class="tab-content" *ngIf="activeTab === 'attendance'">
+      <!-- Attendance Loading State -->
+      <div *ngIf="loadingAttendance" class="section-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading attendance records...</p>
+      </div>
+
+      <!-- Attendance Error State -->
+      <div *ngIf="attendanceError && !loadingAttendance" class="section-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ attendanceError }}</p>
+      </div>
+
+      <!-- Attendance Summary -->
+      <div *ngIf="!loadingAttendance" class="attendance-summary">
+        <div class="summary-card">
+          <div class="card-label">Recent Attendance Rate</div>
+          <div class="card-value">{{ getAttendanceRate() | number:'1.0-0' }}%</div>
+        </div>
+        <div class="summary-card">
+          <div class="card-label">Recent Records</div>
+          <div class="card-value">{{ getRecentAttendance(7).length }} days</div>
+        </div>
+      </div>
+
+      <!-- Attendance History -->
+      <div class="attendance-history">
+        <h3>Recent Attendance (Last 7 Days)</h3>
+        <div class="attendance-list">
+          <div *ngIf="getRecentAttendance(7).length === 0" class="empty-state">
+            <p>No attendance records</p>
+          </div>
+
+          <div *ngFor="let record of getRecentAttendance(7)" class="attendance-item" 
+            [ngClass]="'status-' + record.status">
+            <div class="attendance-date">
+              {{ record.date | date:'MMM d (EEE)' }}
+            </div>
+            <div class="attendance-status">
+              <span class="status-badge" [ngClass]="'badge-' + record.status">
+                {{ formatStatus(record.status) }}
+              </span>
+            </div>
+            <div class="attendance-time" *ngIf="record.check_in_time">
+              {{ record.check_in_time }} - {{ record.check_out_time || '—' }}
+            </div>
+            <div class="attendance-notes" *ngIf="record.notes">
+              {{ record.notes }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Record Attendance Modal -->
+  <div class="modal" *ngIf="showRecordAttendanceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Record Today's Attendance</h2>
+        <button class="btn-close" (click)="showRecordAttendanceModal = false">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <form [formGroup]="attendanceForm" (ngSubmit)="recordAttendance()" class="modal-body">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" formControlName="attendance_date" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select formControlName="status" class="form-input">
+            <option value="present">Present</option>
+            <option value="absent">Absent</option>
+            <option value="leave">On Leave</option>
+            <option value="half_day">Half Day</option>
+            <option value="sick_leave">Sick Leave</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Check-in Time</label>
+            <input type="time" formControlName="check_in_time" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Check-out Time</label>
+            <input type="time" formControlName="check_out_time" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Notes (Optional)</label>
+          <textarea formControlName="notes" class="form-input" rows="2"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="showRecordAttendanceModal = false">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="attendanceForm.invalid">
+            Record Attendance
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,612 @@
+// ============================================================================
+// WORKER NAVBAR STYLING - Blue Theme (Role Selection Color)
+// ============================================================================
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+// Design Tokens
+$primary-color: #3b82f6;
+$primary-dark: #2563eb;
+$primary-light: #dbeafe;
+$secondary-color: #1f2937;
+$white: #ffffff;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$text-light: #9ca3af;
+$border-color: #e5e7eb;
+$light-bg: #f9fafb;
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+
+:host {
+  display: block;
+}
+
+// ============================================================================
+// NAVBAR STYLES
+// ============================================================================
+
+.worker-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: $white;
+  border-bottom: 2px solid $border-color;
+  display: flex;
+  align-items: center;
+  padding: 0 $spacing-lg;
+  z-index: 40;
+  box-shadow: $shadow-md;
+
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    min-width: 180px;
+
+    .logo-img {
+      height: 50px;
+      width: auto;
+      object-fit: contain;
+    }
+  }
+
+  .navbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .navbar-btn {
+      padding: $spacing-sm $spacing-lg;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 1rem;
+
+      &.chatbot-btn {
+        background: linear-gradient(135deg, $primary-color, $primary-dark);
+        color: $white;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: $shadow-lg;
+        }
+
+        ion-icon {
+          font-size: 1.2rem;
+        }
+
+        span {
+          @media (max-width: 640px) {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  .navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+    min-width: 250px;
+    justify-content: flex-end;
+
+    .notification-container {
+      position: relative;
+
+      .notification-btn {
+        position: relative;
+        background: none;
+        color: $text-primary;
+        padding: 8px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: $primary-light;
+          color: $primary-color;
+        }
+
+        ion-icon {
+          font-size: 1.5rem;
+        }
+
+        .notification-badge {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background-color: #ef4444;
+          color: $white;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.65rem;
+          font-weight: bold;
+        }
+      }
+
+      .notification-dropdown {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: $white;
+        border-radius: 12px;
+        box-shadow: $shadow-lg;
+        min-width: 320px;
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 50;
+        border: 1px solid $border-color;
+
+        .dropdown-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: $spacing-md;
+          border-bottom: 1px solid $border-color;
+
+          h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: $text-primary;
+          }
+
+          .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: $text-secondary;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+
+            &:hover {
+              color: $text-primary;
+            }
+          }
+        }
+
+        .notification-list {
+          max-height: 300px;
+          overflow-y: auto;
+
+          .empty-state {
+            padding: $spacing-lg;
+            text-align: center;
+            color: $text-light;
+            font-size: 0.875rem;
+          }
+
+          .notification-item {
+            display: flex;
+            gap: $spacing-md;
+            padding: $spacing-md;
+            border-bottom: 1px solid $border-color;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            &:hover {
+              background-color: $light-bg;
+            }
+
+            &.unread {
+              background-color: rgba($primary-color, 0.05);
+
+              .notification-title {
+                font-weight: 600;
+              }
+            }
+
+            .notification-icon {
+              flex-shrink: 0;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 1.2rem;
+
+              &.info {
+                background-color: rgba(#3b82f6, 0.1);
+                color: #3b82f6;
+              }
+
+              &.warning {
+                background-color: rgba(#f59e0b, 0.1);
+                color: #f59e0b;
+              }
+
+              &.success {
+                background-color: rgba($primary-color, 0.1);
+                color: $primary-color;
+              }
+
+              &.error {
+                background-color: rgba(#ef4444, 0.1);
+                color: #ef4444;
+              }
+            }
+
+            .notification-content {
+              flex: 1;
+              min-width: 0;
+
+              .notification-title {
+                margin: 0 0 $spacing-xs 0;
+                font-size: 0.875rem;
+                color: $text-primary;
+                font-weight: 500;
+              }
+
+              .notification-message {
+                margin: 0 0 $spacing-xs 0;
+                font-size: 0.8125rem;
+                color: $text-secondary;
+                line-height: 1.4;
+              }
+
+              .notification-time {
+                color: $text-light;
+                font-size: 0.75rem;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .profile-container {
+      position: relative;
+
+      .profile-btn {
+        background: none;
+        color: $text-primary;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid $border-color;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          border-color: $primary-color;
+          color: $primary-color;
+        }
+
+        ion-icon {
+          font-size: 1.5rem;
+          transition: transform 0.3s ease;
+        }
+      }
+
+      &.open .profile-btn ion-icon {
+        transform: rotate(180deg);
+      }
+
+      .profile-dropdown {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 280px;
+        background-color: $white;
+        border: 1px solid $border-color;
+        border-radius: 12px;
+        box-shadow: $shadow-lg;
+        z-index: 50;
+        overflow: hidden;
+        animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .profile-header {
+          display: flex;
+          align-items: center;
+          gap: $spacing-md;
+          padding: $spacing-lg;
+          border-bottom: 1px solid $border-color;
+          background-color: $light-bg;
+
+          .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, $primary-color, $primary-dark);
+            color: $white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+          }
+
+          .profile-info {
+            flex: 1;
+            min-width: 0;
+
+            .profile-name {
+              margin: 0;
+              font-size: 0.875rem;
+              font-weight: 600;
+              color: $text-primary;
+            }
+
+            .profile-email {
+              margin: 0;
+              font-size: 0.75rem;
+              color: $text-secondary;
+            }
+          }
+        }
+
+        .profile-menu {
+          display: flex;
+          flex-direction: column;
+
+          .profile-link {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
+            padding: $spacing-md;
+            color: $text-primary;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background-color: $light-bg;
+              color: $primary-color;
+            }
+
+            ion-icon {
+              font-size: 1.2rem;
+            }
+
+            span {
+              flex: 1;
+            }
+
+            &.logout-btn {
+              color: #ef4444;
+
+              &:hover {
+                background-color: #fee2e2;
+                color: #dc2626;
+              }
+            }
+          }
+
+          hr {
+            margin: $spacing-xs 0;
+            border: none;
+            border-top: 1px solid $border-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// CHATBOT MODAL
+// ============================================================================
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 35;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.chatbot-modal {
+  position: fixed;
+  top: 70px;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 450px;
+  background-color: $white;
+  z-index: 45;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  animation: slideInRight 0.3s ease;
+  overflow-y: auto;
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+  }
+
+  .chatbot-container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-lg;
+
+    .modal-close-btn {
+      position: absolute;
+      top: $spacing-md;
+      right: $spacing-md;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: $text-secondary;
+      z-index: 10;
+      padding: $spacing-sm;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        color: $text-primary;
+      }
+
+      ion-icon {
+        font-size: 1.5rem;
+      }
+    }
+
+    .chatbot-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      color: $text-secondary;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================================================
+// RESPONSIVE DESIGN
+// ============================================================================
+
+@media (max-width: 768px) {
+  .worker-navbar {
+    padding: 0 $spacing-md;
+    height: 60px;
+
+    .navbar-logo {
+      min-width: 220px;
+
+      .logo-img {
+        height: 90px;
+      }
+
+      .logo-text {
+        display: none;
+      }
+    }
+
+    .navbar-center {
+      .chatbot-btn {
+        padding: $spacing-xs $spacing-md;
+
+        span {
+          display: none;
+        }
+      }
+    }
+
+    .navbar-actions {
+      gap: $spacing-md;
+      min-width: auto;
+
+      .navbar-btn {
+        font-size: 1.25rem;
+        padding: $spacing-xs;
+      }
+    }
+  }
+
+  .notification-dropdown,
+  .profile-dropdown {
+    width: calc(100vw - $spacing-md * 2);
+    max-width: 350px;
+  }
+
+  .chatbot-modal {
+    top: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .worker-navbar {
+    padding: 0 $spacing-sm;
+
+    .navbar-logo {
+      min-width: 200px;
+
+      .logo-img {
+        height: 90px;
+      }
+    }
+
+    .navbar-actions {
+      gap: $spacing-sm;
+
+      .navbar-btn {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .notification-dropdown,
+  .profile-dropdown {
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+  }
+
+  .chatbot-modal {
+    max-width: 100%;
+  }
+}

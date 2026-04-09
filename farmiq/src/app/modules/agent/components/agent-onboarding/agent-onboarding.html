@@ -1,0 +1,101 @@
+<div class="agent-onboarding">
+  <header class="onboarding-header">
+    <h1>Farmer Onboarding</h1>
+    <div class="header-actions">
+      <button class="btn-chat" (click)="goToChatbot()" title="FarmGrow Chat Assistant">
+        <span class="chat-icon">💬</span>
+        <span class="btn-text">FarmGrow</span>
+      </button>
+      <button class="btn-signout" (click)="signOut()" title="Sign out">
+        <span class="signout-icon">🚪</span>
+        <span class="btn-text">Sign Out</span>
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-alert">{{ successMessage }}</div>
+
+  <!-- Action Button -->
+  <div class="action-buttons">
+    <button (click)="showNewForm = !showNewForm" class="btn-primary">
+      {{ showNewForm ? 'Cancel' : '+ Onboard New Farmer' }}
+    </button>
+  </div>
+
+  <!-- New Farmer Form -->
+  <div *ngIf="showNewForm" class="form-card">
+    <h3>Onboard New Farmer</h3>
+    <form (ngSubmit)="submitNewFarmer()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input [(ngModel)]="newFarmer.name" name="name" type="text" required>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input [(ngModel)]="newFarmer.email" name="email" type="email" required>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input [(ngModel)]="newFarmer.phone" name="phone" type="tel">
+        </div>
+        <div class="form-group">
+          <label>Farm Location</label>
+          <input [(ngModel)]="newFarmer.farmLocation" name="farmLocation" type="text">
+        </div>
+        <div class="form-group">
+          <label>Farm Size (acres)</label>
+          <input [(ngModel)]="newFarmer.farmSize" name="farmSize" type="number" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Crop Type</label>
+          <input [(ngModel)]="newFarmer.cropType" name="cropType" type="text">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Onboard Farmer</button>
+        <button type="button" (click)="showNewForm = false" class="btn-secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <button (click)="activeTab = 'pending'" [class.active]="activeTab === 'pending'" class="tab-btn">
+      Pending Onboardings
+    </button>
+    <button (click)="activeTab = 'completed'" [class.active]="activeTab === 'completed'" class="tab-btn">
+      Completed
+    </button>
+  </div>
+
+  <!-- Onboarding List -->
+  <div *ngIf="!loading" class="onboarding-list">
+    <div *ngFor="let item of getFilteredList()" class="onboarding-item">
+      <div class="item-header">
+        <div class="item-info">
+          <h3>{{ item.farmerName }}</h3>
+          <p class="item-email">{{ item.email }}</p>
+        </div>
+        <span class="status-badge" [style.backgroundColor]="getStatusColor(item.status)">
+          {{ item.status }}
+        </span>
+      </div>
+      <div class="item-details">
+        <p><strong>Phone:</strong> {{ item.phone }}</p>
+        <p><strong>Location:</strong> {{ item.location }}</p>
+        <p><strong>Farm Size:</strong> {{ item.farmSize }} acres</p>
+        <p><strong>Crop Type:</strong> {{ item.cropType }}</p>
+      </div>
+      <div class="item-actions" *ngIf="item.status === 'pending'">
+        <button (click)="updateStatus(item.id, 'verified')" class="action-btn primary">Verify</button>
+        <button (click)="updateStatus(item.id, 'rejected')" class="action-btn danger">Reject</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { IonIcon } from '@ionic/angular/standalone';
+import { filter } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-admin-footer-nav',
+  standalone: true,
+  imports: [CommonModule, RouterModule, IonIcon],
+  templateUrl: './admin-footer-nav.html',
+  styleUrl: './admin-footer-nav.scss'
+})
+export class AdminFooterNav implements OnInit {
+  currentRoute = '';
+
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    // Subscribe to route changes
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.currentRoute = event.url;
+      });
+  }
+
+  isActive(route: string): boolean {
+    return this.currentRoute.includes(route);
+  }
+}

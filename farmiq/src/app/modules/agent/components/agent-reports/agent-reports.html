@@ -1,0 +1,83 @@
+<div class="agent-reports">
+  <header class="reports-header">
+    <h1>Performance Reports</h1>
+    <button (click)="downloadReport()" class="btn-download">Download Report</button>
+  </header>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="error" class="error-alert">{{ error }}</div>
+
+  <div *ngIf="!loading && performance" class="reports-content">
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Farmers Onboarded</h3>
+        <p class="metric-value">{{ getMetricValue('farmersOnboarded') }}</p>
+        <p class="metric-label">Total recruits</p>
+      </div>
+      <div class="metric-card">
+        <h3>Verifications Completed</h3>
+        <p class="metric-value">{{ getMetricValue('verificationsCompleted') }}</p>
+        <p class="metric-label">KYC verifications</p>
+      </div>
+      <div class="metric-card">
+        <h3>Success Rate</h3>
+        <p class="metric-value" [ngClass]="getPerformanceClass(getMetricValue('successRate'), 80)">
+          {{ getMetricValue('successRate') | number:'1.1-1' }}%
+        </p>
+        <p class="metric-label">Approval rate</p>
+      </div>
+      <div class="metric-card">
+        <h3>Commission Earned</h3>
+        <p class="metric-value">{{ getMetricValue('commissionEarned') | currency }}</p>
+        <p class="metric-label">Total commission</p>
+      </div>
+    </div>
+
+    <!-- Detailed Report -->
+    <div class="report-section">
+      <h3>Detailed Metrics</h3>
+      <div class="metrics-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+              <th>Target</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let metric of getTopMetrics()">
+              <td class="metric-name">{{ metric.name }}</td>
+              <td class="metric-val">{{ metric.value }}</td>
+              <td>{{ metric.target }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="metric.value >= metric.target ? 'success' : 'warning'">
+                  {{ metric.value >= metric.target ? 'On Track' : 'Behind' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Monthly Trend -->
+    <div class="report-section">
+      <h3>Monthly Trend</h3>
+      <div class="trend-list">
+        <div *ngFor="let month of getMonthlyTrend()" class="trend-item">
+          <span class="month-label">{{ month.month }}</span>
+          <div class="trend-bar">
+            <div class="bar-fill" [style.width.%]="(month.value / 100) * 100"></div>
+          </div>
+          <span class="trend-value">{{ month.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

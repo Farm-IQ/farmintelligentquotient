@@ -1,0 +1,285 @@
+// ============================================================================
+// FARMER FOOTER NAVIGATION STYLING
+// ============================================================================
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+// Design Tokens
+$primary-color: #10b981;
+$primary-dark: #059669;
+$secondary-color: #1f2937;
+$light-bg: #f9fafb;
+$white: #ffffff;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$text-light: #9ca3af;
+$border-color: #e5e7eb;
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+
+// ============================================================================
+// FOOTER NAVIGATION STYLES
+// ============================================================================
+
+.farmer-footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background-color: $white;
+  border-top: 2px solid $border-color;
+  z-index: 30;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
+
+  .nav-list {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+
+    .nav-item {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+
+      &.active {
+        .nav-link {
+          color: $primary-color;
+
+          .nav-icon-wrapper {
+            background-color: rgba($primary-color, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+          }
+
+          .nav-text {
+            opacity: 1;
+            transform: translateY(-8px);
+            color: $primary-color;
+            font-weight: 600;
+          }
+        }
+
+        // Active indicator line
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40px;
+          height: 3px;
+          background: linear-gradient(90deg, $primary-color, $primary-dark);
+          border-radius: 0 0 3px 3px;
+        }
+      }
+
+      .nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-xs;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        color: $text-secondary;
+        padding: $spacing-md $spacing-sm;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+
+        &:hover {
+          color: $primary-color;
+
+          .nav-icon-wrapper {
+            background-color: rgba($primary-color, 0.08);
+          }
+        }
+
+        .nav-icon-wrapper {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: transparent;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          z-index: 1;
+
+          ion-icon {
+            font-size: 1.5rem;
+          }
+        }
+
+        .nav-text {
+          font-size: 0.75rem;
+          font-weight: 500;
+          opacity: 0;
+          max-height: 20px;
+          overflow: hidden;
+          white-space: nowrap;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          color: $text-secondary;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// RESPONSIVE DESIGN
+// ============================================================================
+
+@media (max-width: 768px) {
+  .farmer-footer-nav {
+    height: 65px;
+
+    .nav-list {
+      .nav-item {
+        .nav-link {
+          padding: $spacing-md $spacing-xs;
+
+          .nav-icon-wrapper {
+            width: 45px;
+            height: 45px;
+
+            ion-icon {
+              font-size: 1.3rem;
+            }
+          }
+
+          .nav-text {
+            font-size: 0.7rem;
+          }
+        }
+
+        &.active {
+          .nav-link {
+            .nav-icon-wrapper {
+              transform: translateY(-6px);
+            }
+
+            .nav-text {
+              transform: translateY(-6px);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .farmer-footer-nav {
+    height: 60px;
+
+    .nav-list {
+      .nav-item {
+        .nav-link {
+          padding: $spacing-sm $spacing-xs;
+          gap: 2px;
+
+          .nav-icon-wrapper {
+            width: 40px;
+            height: 40px;
+
+            ion-icon {
+              font-size: 1.2rem;
+            }
+          }
+
+          .nav-text {
+            font-size: 0.65rem;
+            max-height: 18px;
+          }
+        }
+
+        &.active {
+          &::before {
+            width: 30px;
+          }
+
+          .nav-link {
+            .nav-icon-wrapper {
+              transform: translateY(-5px);
+            }
+
+            .nav-text {
+              transform: translateY(-5px);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes navItemPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.nav-item.active .nav-icon-wrapper {
+  animation: navItemPulse 0.4s ease-in-out;
+}
+
+// ============================================================================
+// DARK MODE SUPPORT (Optional)
+// ============================================================================
+
+@media (prefers-color-scheme: dark) {
+  .farmer-footer-nav {
+    background-color: $secondary-color;
+    border-top-color: rgba(255, 255, 255, 0.1);
+
+    .nav-list .nav-item .nav-link {
+      color: rgba(255, 255, 255, 0.6);
+
+      &:hover {
+        color: rgba(16, 185, 129, 0.8);
+      }
+
+      .nav-text {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    .nav-list .nav-item.active {
+      .nav-link {
+        color: rgba(16, 185, 129, 0.9);
+
+        .nav-text {
+          color: rgba(16, 185, 129, 0.9);
+        }
+      }
+    }
+  }
+}

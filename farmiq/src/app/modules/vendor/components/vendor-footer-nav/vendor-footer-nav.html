@@ -1,0 +1,58 @@
+<!-- ============================================================================
+     VENDOR FOOTER NAVIGATION - Bottom Navigation Bar
+     Router Links to All Vendor Features
+     ============================================================================ -->
+
+<nav class="vendor-footer-nav">
+  <ul class="nav-list">
+    <!-- Dashboard -->
+    <li class="nav-item" [class.active]="isActive('/vendor')">
+      <a routerLink="/vendor" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="home-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Dashboard</span>
+      </a>
+    </li>
+
+    <!-- Products -->
+    <li class="nav-item" [class.active]="isActive('/vendor/products')">
+      <a routerLink="/vendor/products" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="cube-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Products</span>
+      </a>
+    </li>
+
+    <!-- Orders -->
+    <li class="nav-item" [class.active]="isActive('/vendor/orders')">
+      <a routerLink="/vendor/orders" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="bag-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Orders</span>
+      </a>
+    </li>
+
+    <!-- Analytics -->
+    <li class="nav-item" [class.active]="isActive('/vendor/analytics')">
+      <a routerLink="/vendor/analytics" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="analytics-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Analytics</span>
+      </a>
+    </li>
+
+    <!-- Settings -->
+    <li class="nav-item" [class.active]="isActive('/vendor/settings')">
+      <a routerLink="/vendor/settings" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="settings-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Settings</span>
+      </a>
+    </li>
+  </ul>
+</nav>

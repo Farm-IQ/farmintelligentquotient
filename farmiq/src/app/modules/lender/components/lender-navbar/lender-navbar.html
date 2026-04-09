@@ -1,0 +1,106 @@
+<!-- ============================================================================
+     LENDER NAVBAR - Top Navigation Bar
+     Logo, Chatbot Button, Notifications, Lender Controls
+     ============================================================================ -->
+
+<nav class="lender-navbar">
+  <!-- Logo Section (Left) -->
+  <div class="navbar-logo">
+    <img src="/images/logo-2.png" alt="FarmIQ Logo" class="logo-img">
+    <span class="logo-text">FarmIQ Lender</span>
+  </div>
+
+  <!-- Center Actions -->
+  <div class="navbar-center">
+    <!-- Chatbot Button -->
+    <button class="navbar-btn chatbot-btn" (click)="openChatbot()" title="Open Chatbot">
+      <ion-icon name="chatbubbles-outline"></ion-icon>
+      <span>Ask FarmGrow AI</span>
+    </button>
+  </div>
+
+  <!-- Right Actions -->
+  <div class="navbar-actions">
+    <!-- Notifications -->
+    <div class="notification-container">
+      <button class="navbar-btn notification-btn" (click)="toggleNotifications()" title="Notifications">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <span class="notification-badge" *ngIf="unreadNotifications > 0">{{ unreadNotifications }}</span>
+      </button>
+
+      <!-- Notification Dropdown -->
+      <div class="notification-dropdown" *ngIf="showNotifications">
+        <div class="dropdown-header">
+          <h3>Notifications</h3>
+          <button class="close-btn" (click)="toggleNotifications()">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="notification-list">
+          <div *ngIf="notifications.length === 0" class="empty-state">
+            <p>No notifications</p>
+          </div>
+
+          <div *ngFor="let notif of notifications" class="notification-item" [class.unread]="!notif.read">
+            <div class="notification-icon" [class]="notif.type">
+              <ion-icon [name]="getNotificationIcon(notif.type)"></ion-icon>
+            </div>
+            <div class="notification-content">
+              <p class="notification-title">{{ notif.title }}</p>
+              <p class="notification-message">{{ notif.message }}</p>
+              <small class="notification-time">{{ notif.timestamp | date: 'short' }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Menu -->
+    <div class="profile-container">
+      <button class="navbar-btn profile-btn" (click)="toggleProfile()" title="Profile">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </button>
+
+      <!-- Profile Dropdown -->
+      <div class="profile-dropdown" *ngIf="showProfile">
+        <div class="profile-header">
+          <div class="profile-avatar">{{ userInitials }}</div>
+          <div class="profile-info">
+            <p class="profile-name">{{ userName }}</p>
+            <p class="profile-email">{{ userEmail }}</p>
+          </div>
+        </div>
+
+        <div class="profile-menu">
+          <a href="/lender/settings" class="profile-link">
+            <ion-icon name="settings-outline"></ion-icon>
+            <span>Settings</span>
+          </a>
+          <a href="/lender/account" class="profile-link">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>Account</span>
+          </a>
+          <hr>
+          <button class="profile-link logout-btn" (click)="logout()">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Chatbot Modal -->
+<div class="chatbot-modal" *ngIf="showChatbot">
+  <div class="chatbot-container">
+    <button class="modal-close-btn" (click)="closeChatbot()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+    <app-farmgrow-chatbot></app-farmgrow-chatbot>
+  </div>
+</div>
+
+<!-- Overlay for modals -->
+<div class="modal-overlay" *ngIf="showChatbot" (click)="closeChatbot()"></div>

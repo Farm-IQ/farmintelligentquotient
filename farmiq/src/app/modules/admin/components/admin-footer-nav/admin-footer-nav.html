@@ -1,0 +1,58 @@
+<!-- ============================================================================
+     ADMIN FOOTER NAVIGATION - Bottom Navigation Bar
+     Router Links to All Admin Dashboards
+     ============================================================================ -->
+
+<nav class="admin-footer-nav">
+  <ul class="nav-list">
+    <!-- Dashboard -->
+    <li class="nav-item" [class.active]="isActive('/admin')">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="home-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Dashboard</span>
+      </a>
+    </li>
+
+    <!-- User Management -->
+    <li class="nav-item" [class.active]="isActive('/admin/user-management')">
+      <a routerLink="/admin/user-management" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="people-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Users</span>
+      </a>
+    </li>
+
+    <!-- Analytics -->
+    <li class="nav-item" [class.active]="isActive('/admin/analytics')">
+      <a routerLink="/admin/analytics" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="analytics-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Analytics</span>
+      </a>
+    </li>
+
+    <!-- Data Governance -->
+    <li class="nav-item" [class.active]="isActive('/admin/data-governance')">
+      <a routerLink="/admin/data-governance" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Governance</span>
+      </a>
+    </li>
+
+    <!-- Settings -->
+    <li class="nav-item" [class.active]="isActive('/admin/settings')">
+      <a routerLink="/admin/settings" routerLinkActive="active" class="nav-link">
+        <div class="nav-icon-wrapper">
+          <ion-icon name="settings-outline"></ion-icon>
+        </div>
+        <span class="nav-text">Settings</span>
+      </a>
+    </li>
+  </ul>
+</nav>

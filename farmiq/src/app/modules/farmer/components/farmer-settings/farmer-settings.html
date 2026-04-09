@@ -1,0 +1,46 @@
+<div class="settings-dashboard">
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading settings...</p>
+  </div>
+
+  <div *ngIf="!loading && !error" class="settings-content">
+    <section class="page-header">
+      <h1>Settings</h1>
+    </section>
+
+    <section class="settings-section">
+      <h2>Preferences</h2>
+      <div class="setting-item">
+        <label>Notifications</label>
+        <input type="checkbox" [(ngModel)]="settings.notifications" class="toggle">
+      </div>
+      <div class="setting-item">
+        <label>Weather Alerts</label>
+        <input type="checkbox" [(ngModel)]="settings.weather_alerts" class="toggle">
+      </div>
+    </section>
+
+    <section class="settings-section">
+      <h2>Farm Management</h2>
+      <div class="setting-item">
+        <label>Farm Size (hectares)</label>
+        <input type="number" [(ngModel)]="settings.farm_size" class="input-field">
+      </div>
+      <div class="setting-item">
+        <label>Primary Crop</label>
+        <select [(ngModel)]="settings.primary_crop" class="input-field">
+          <option value="maize">Maize</option>
+          <option value="wheat">Wheat</option>
+          <option value="rice">Rice</option>
+          <option value="vegetables">Vegetables</option>
+        </select>
+      </div>
+    </section>
+
+    <button class="btn-save" (click)="saveSettings()">
+      <ion-icon name="checkmark-outline"></ion-icon>
+      Save Changes
+    </button>
+  </div>
+</div>

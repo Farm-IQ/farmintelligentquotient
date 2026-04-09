@@ -1,0 +1,25 @@
+// ============================================================================
+// VENDOR LAYOUT STYLES
+// ============================================================================
+
+$white: #ffffff;
+$light-bg: #f9fafb;
+
+.vendor-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $light-bg;
+
+  .vendor-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 70px; // Space for fixed footer nav
+    overflow-y: auto;
+
+    @media (max-width: 768px) {
+      padding-bottom: 65px;
+    }
+  }
+}

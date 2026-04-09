@@ -1,0 +1,502 @@
+// ============================================================================
+// LENDER NAVBAR STYLES
+// ============================================================================
+
+// Color Variables
+$primary-color: #8b5cf6; // Violet for lender
+$secondary-color: #a78bfa; // Light Violet
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$border-color: #e5e7eb;
+$white: #ffffff;
+$light-bg: #f9fafb;
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+
+// ============================================================================
+// NAVBAR CONTAINER
+// ============================================================================
+
+.lender-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+  box-shadow: $shadow-sm;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: $spacing-lg;
+
+  @media (max-width: 768px) {
+    padding: $spacing-md;
+    flex-wrap: wrap;
+  }
+}
+
+// ============================================================================
+// LOGO SECTION
+// ============================================================================
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+
+  .logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $primary-color;
+    letter-spacing: -0.5px;
+  }
+}
+
+// ============================================================================
+// CENTER ACTIONS
+// ============================================================================
+
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex: 1;
+  justify-content: center;
+
+  @media (max-width: 1024px) {
+    order: 3;
+    width: 100%;
+    margin-top: $spacing-md;
+  }
+}
+
+.chatbot-btn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: $spacing-sm;
+    span {
+      display: none;
+    }
+  }
+}
+
+// ============================================================================
+// RIGHT ACTIONS
+// ============================================================================
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+
+  @media (max-width: 768px) {
+    gap: $spacing-md;
+  }
+}
+
+.navbar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: $text-secondary;
+  padding: $spacing-sm;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    background-color: $light-bg;
+    color: $primary-color;
+  }
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+}
+
+// ============================================================================
+// NOTIFICATION STYLES
+// ============================================================================
+
+.notification-container {
+  position: relative;
+
+  .notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ef4444;
+    color: $white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .notification-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 350px;
+    max-width: 90vw;
+    background-color: $white;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    box-shadow: $shadow-lg;
+    z-index: 50;
+    max-height: 400px;
+    overflow-y: auto;
+
+    .dropdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: $spacing-md;
+      border-bottom: 1px solid $border-color;
+
+      h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: $text-secondary;
+        padding: 0;
+
+        &:hover {
+          color: $text-primary;
+        }
+      }
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+
+      .empty-state {
+        padding: $spacing-lg $spacing-md;
+        text-align: center;
+        color: $text-secondary;
+        font-size: 0.9rem;
+      }
+
+      .notification-item {
+        display: flex;
+        gap: $spacing-md;
+        padding: $spacing-md;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background-color 0.2s ease;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &.unread {
+          background-color: #f5f3ff;
+        }
+
+        &:hover {
+          background-color: $light-bg;
+        }
+
+        .notification-icon {
+          flex-shrink: 0;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+
+          &.info {
+            background-color: #dbeafe;
+            color: #0369a1;
+          }
+
+          &.warning {
+            background-color: #fef3c7;
+            color: #b45309;
+          }
+
+          &.success {
+            background-color: #dcfce7;
+            color: #15803d;
+          }
+
+          &.error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+          }
+        }
+
+        .notification-content {
+          flex: 1;
+          min-width: 0;
+
+          .notification-title {
+            margin: 0 0 $spacing-sm 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: $text-primary;
+          }
+
+          .notification-message {
+            margin: 0 0 $spacing-sm 0;
+            font-size: 0.85rem;
+            color: $text-secondary;
+            line-height: 1.4;
+          }
+
+          .notification-time {
+            color: $text-secondary;
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// PROFILE MENU STYLES
+// ============================================================================
+
+.profile-container {
+  position: relative;
+
+  .profile-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 250px;
+    background-color: $white;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    box-shadow: $shadow-lg;
+    z-index: 50;
+    overflow: hidden;
+
+    .profile-header {
+      display: flex;
+      gap: $spacing-md;
+      padding: $spacing-md;
+      border-bottom: 1px solid $border-color;
+      background-color: $light-bg;
+
+      .profile-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, $primary-color, $secondary-color);
+        color: $white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .profile-info {
+        flex: 1;
+        min-width: 0;
+
+        .profile-name {
+          margin: 0;
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: $text-primary;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .profile-email {
+          margin: $spacing-sm 0 0 0;
+          font-size: 0.8rem;
+          color: $text-secondary;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .profile-menu {
+      padding: $spacing-sm 0;
+
+      .profile-link {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        padding: $spacing-md;
+        color: $text-primary;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        background: none;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        font-size: 0.9rem;
+
+        ion-icon {
+          font-size: 1.2rem;
+          color: $primary-color;
+        }
+
+        &:hover {
+          background-color: $light-bg;
+          padding-left: calc($spacing-md + 0.25rem);
+        }
+
+        &.logout-btn {
+          color: #ef4444;
+
+          ion-icon {
+            color: #ef4444;
+          }
+        }
+      }
+
+      hr {
+        margin: $spacing-sm 0;
+        border: none;
+        border-top: 1px solid $border-color;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// CHATBOT MODAL STYLES
+// ============================================================================
+
+.chatbot-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  z-index: 200;
+  animation: slideUp 0.3s ease;
+
+  .chatbot-container {
+    width: 100%;
+    max-width: 400px;
+    height: 80vh;
+    background-color: $white;
+    border-radius: 12px 12px 0 0;
+    box-shadow: $shadow-lg;
+    overflow: hidden;
+    position: relative;
+
+    @media (max-width: 768px) {
+      max-width: 100%;
+      height: 90vh;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: $spacing-md;
+      right: $spacing-md;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: $text-secondary;
+      z-index: 210;
+      padding: $spacing-sm;
+
+      &:hover {
+        color: $text-primary;
+      }
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 199;
+  animation: fadeIn 0.3s ease;
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
