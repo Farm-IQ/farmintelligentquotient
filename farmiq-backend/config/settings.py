@@ -3,6 +3,7 @@ Environment Settings for FarmIQ Backend
 Supports multiple environments with dynamic configuration
 """
 from pydantic_settings import BaseSettings
+from pydantic import computed_field
 from typing import Optional, List
 import os
 
@@ -24,7 +25,11 @@ class Settings(BaseSettings):
     app_name: str = "FarmIQ"
     app_version: str = "1.0.0"
     environment: str = os.getenv('ENVIRONMENT', 'development')
-    debug: bool = property(lambda self: self.environment in ['development', 'staging'])
+    
+    @computed_field
+    @property
+    def debug(self) -> bool:
+        return self.environment in ['development', 'staging']
     
     # ========== SERVER CONFIGURATION ==========
     host: str = "0.0.0.0"
